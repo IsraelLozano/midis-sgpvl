@@ -12,12 +12,19 @@ namespace MIDIS.SGPVL.Manager.MappingDto
         {
             #region Maestros
             CreateMap<MaeDistrito, GetDistritoDto>();
-            CreateMap<MaeDepartamento, GetDptoDto>();
-            CreateMap<MaeProvincium, GetProvinciaDto>();
-            CreateMap<ubigeo, GetUbigeoDto>();
+            CreateMap<MaeDepartamento, GetDptoDto>()
+                 .ForMember(dest => dest.id, source => source.MapFrom(s => s.vDescripcion));
+            CreateMap<MaeProvincium, GetProvinciaDto>()
+                .ForMember(dest => dest.id, source => source.MapFrom(s => s.vDescripcion));
+            CreateMap<ubigeo, GetUbigeoDto>()
+                .ForMember(dest => dest.codUbigeo, source => source.MapFrom(s => s.cod_ubigeo_inei))
+                .ForMember(dest => dest.descripcion, source => source.MapFrom(s => s.desc_ubigeo_inei));
+
             CreateMap<VLEnumerado, GetDistritoDto>();
 
-            CreateMap<VLEnumItem, GetEnumeradoComboDto>();
+            CreateMap<VLEnumItem, GetEnumeradoComboDto>()
+                .ForMember(dest => dest.id, source => source.MapFrom(s => s.iIdEnuItem))
+                .ForMember(dest => dest.descripcion , source => source.MapFrom(s => s.vDescripcion));
             #endregion
 
             #region Comite Administrativo

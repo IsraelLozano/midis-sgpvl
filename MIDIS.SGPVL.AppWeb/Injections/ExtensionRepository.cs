@@ -1,6 +1,8 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using MIDIS.SGPVL.Contexto.Data;
+using MIDIS.SGPVL.Manager.ComiteAdmin;
+using MIDIS.SGPVL.Manager.Maestro;
 using MIDIS.SGPVL.Manager.Settings;
 using MIDIS.SGPVL.Repository.Comite;
 using MIDIS.SGPVL.Repository.ComitePvl;
@@ -79,8 +81,8 @@ namespace MIDIS.SGPVL.AppWeb.Injections
         {
 
             services.AddScoped<IAplicationConstants, AplicationConstants>();
-            //services.AddScoped<ISeguridadManager, SeguridadManager>();
-            //services.AddScoped<IMaestraManager, MaestraManager>();
+            services.AddScoped<IComiteAdminManager, ComiteAdminManager>();
+            services.AddScoped<IMaestroManager, MaestroManager>();
             //services.AddScoped<IReporteManager, ReporteManager>();
             //services.AddScoped<IPedidoManager, PedidoManager>();
 

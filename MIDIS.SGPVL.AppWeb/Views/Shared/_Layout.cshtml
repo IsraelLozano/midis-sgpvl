@@ -39,6 +39,8 @@
     @* <link rel="mask-icon" href="img/favicon/safari-pinned-tab.svg" color="#5bbad5"> *@
 
     @* <link rel="stylesheet" href="~/MIDIS.SGPVL.AppWeb.styles.css" asp-append-version="true" /> *@
+
+    @RenderSection("HeadBlock", required: false)
 </head>
 <body class="mod-bg-1 mod-nav-link">
 
@@ -1185,6 +1187,7 @@
                   + src/../jquery-snippets.js (core) -->
     <script src="~/asset/js/vendors.bundle.js"></script>
     <script src="~/asset/js/app.bundle.js"></script>
+ 
 
     @*<script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

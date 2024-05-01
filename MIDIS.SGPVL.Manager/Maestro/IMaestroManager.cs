@@ -7,5 +7,6 @@ namespace MIDIS.SGPVL.Manager.Maestro
     {
         Task<List<GetEnumeradoDto>> GetListEnumerado();
         Task<Dictionary<EnumeradoCabecera, List<GetEnumeradoComboDto>>> GetListEnumeradoByGrupo(List<EnumeradoCabecera> listaMaestra);
+        Task<List<GetUbigeoDto>> getUbigeosByProvincia(string codProv);
     }
 }

@@ -17,6 +17,26 @@ namespace MIDIS.SGPVL.Manager.Maestro
             _mapper = mapper;
         }
 
+        #region Ubigeos
+
+        public async Task<List<GetUbigeoDto>> getUbigeosByProvincia(string codProv)
+        {
+            try
+            {
+                var querys = _unitOfWork._ubigeoRepository.GetAll(l => l.cod_prov_inei.Equals(codProv));
+                var response = _mapper.Map<List<GetUbigeoDto>>(querys);
+                return response;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
+
+        #endregion
+
         #region Enumerados
         public async Task<List<GetEnumeradoDto>> GetListEnumerado()
         {

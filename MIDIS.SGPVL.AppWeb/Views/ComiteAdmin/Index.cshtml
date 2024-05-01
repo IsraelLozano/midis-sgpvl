@@ -1,21 +1,133 @@
 ﻿@{
     ViewData["Title"] = "Comite Admin";
-    ViewData["TitleOption"] = "Principal";
+    ViewData["TitleOption"] = "Comite Administrativo";
     ViewData["PageName"] = "comite-admin";
 }
 
 @section breadcrumb {
-
     <li class="breadcrumb-item">Comite Administrativo</li>
     <li class="position-absolute pos-top pos-right d-none d-sm-block"><span class="js-get-date"></span></li>
 }
 
 
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/asset/css/fa-brands.css">
+    <link rel="stylesheet" media="screen, print" href="~/asset/css/formplugins/select2/select2.bundle.css">
+    <link rel="stylesheet" media="screen, print" href="~/asset/css/datagrid/datatables/datatables.bundle.css">
+}
 
-<div class="fs-lg fw-300 p-5 bg-white border-faded rounded mb-g">
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr">
+                <h2>
+                    Listado de Comite <span class="fw-300"><i>Administrativo</i></span>
+                </h2>
+                <div class="panel-toolbar">
+                    <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+                    <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+                    <button class="btn btn-panel" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+                </div>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    <table id="dt-basic-example" class="table table-bordered table-hover w-100">
+                        <thead>
+                            <tr>
+                                <th class="width-10">Id</th>
+                                @* <th>Tipo Resolucion</th>
+                                <th>Nro Resolucion</th>
+                                <th>Fecha Emision</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Fin</th>
+                                <th>Nro Miembros</th> *@
+                                @* <th class="text-right">Contacts</th> *@
+                                @* <th>Acciones</th> *@
+                            </tr>
+                        </thead>
 
-    <h3 class="mb-g">
-        <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    </h3>
-
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+@section Scripts {
+    <script src="~/asset/js/site.js"></script>
+    <script src="~/asset/js/datagrid/datatables/datatables.bundle.js"></script>
+
+    <script>
+
+        // var table = $("#dt-basic-example").DataTable();
+
+        $(document).ready(function () {
+            var table = $('#dt-basic-example').dataTable({
+                language: {
+                    processing: "Procesando...",
+                    search: "Busqueda&nbsp;:",
+                    lengthMenu: "Mostrando _MENU_ reg. por pagina",
+                    info: "Mostrando pag. _PAGE_ de _PAGES_ - Total _TOTAL_ registros",
+                    infoEmpty: "No hay registros empty",
+                    infoFiltered: "(filtrados de _MAX_ total de reg.)",
+                    infoPostFix: "",
+                    loadingRecords: "Cargando los registros...",
+                    zeroRecords: "No hay registros",
+                    emptyTable: "No hay datos",
+                    paginate: {
+                        first: "Primero",
+                        previous: "Previo",
+                        next: "Siguiente",
+                        last: "Ultimo"
+                    },
+                    aria: {
+                        sortAscending: ": activer pour trier la colonne par ordre croissant",
+                        sortDescending: ": activer pour trier la colonne par ordre décroissant"
+                    },
+                    decimal: "."
+                },
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "pageLength": 10,
+
+                "ajax": {
+                    "url": "@Url.Action("IndexData", "ComiteAdmin")",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+
+                "columns": [
+                    { "data": "iIdComite" },
+                    // { "data": "nombre", "name": "Nombre", "autoWidth": true },
+                    // { "data": "sigla", "title": "Sigla", "name": "Sigla", "autoWidth": true },
+                    // { "data": "dependencia", "name": "Dependencia", "autoWidth": true },
+                    // { "data": "activo", "name": "Activo", "autoWidth": true },
+                    // {
+                    //     data: null,
+                    //     className: "center",
+                    //     defaultContent: "<button title='Editar' class='btn btn-primary btn-rounded btn-sm'><i class='fa fa-pencil'></i></button><button title='Eliminar' class='btn btn-danger btn-rounded btn-sm'><i class='fa fa-trash-o'></i></button>",
+                    //     targets: -1
+                    // }
+                ],
+                // 'createdRow': function (row, data, dataIndex) {
+                createdRow: function (row, data, type, name) {
+                    console.log(data)
+                    
+                },
+
+
+                // "columnDefs": [
+                //     { className: "text-center", "targets": [0, 4, 5] },
+
+                // ],
+                searchDelay: 350
+            });
+
+            // console.log(table.data)
+        })
+    </script>
+
+}

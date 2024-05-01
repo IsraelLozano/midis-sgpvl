@@ -6,11 +6,22 @@ using MIDIS.SGPVL.AppWeb.Injections;
 using System.Reflection;
 using MIDIS.SGPVL.Contexto.See;
 using System.Security.Principal;
+using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+})
+.ConfigureApiBehaviorOptions(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+})
+.AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+
 var configuration = builder.Configuration;
 
 //Configuracion de correo-------------------------------------/
@@ -66,6 +77,8 @@ builder.Services.AddSession(
 
 //Filters
 builder.Services.AddScoped<ModelValidationAttribute>();
+
+//builder.Services.AddControllersWithViews()
 
 
 var app = builder.Build();
