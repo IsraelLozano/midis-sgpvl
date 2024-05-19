@@ -1,32 +1,31 @@
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
+using MIDIS.SGPVL.AppWeb.Injections;
+using MIDIS.SGPVL.Contexto.See;
 using MIDIS.SGPVL.Manager.MappingDto;
 using MIDIS.SGPVL.Utils.Dtos;
 using MIDIS.SGPVL.Utils.Filters;
-using MIDIS.SGPVL.AppWeb.Injections;
-using System.Reflection;
-using MIDIS.SGPVL.Contexto.See;
-using System.Security.Principal;
 using Newtonsoft.Json.Serialization;
+using System.Globalization;
+using System.Reflection;
+using MIDIS.SGPVL.Utils.Helpers.FileManager;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
 // Add services to the container.
-builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
+builder.Services.AddControllersWithViews()
+    .AddRazorRuntimeCompilation()
+    .AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
 })
-.ConfigureApiBehaviorOptions(options =>
+.AddJsonOptions(options =>
 {
-    options.SuppressModelStateInvalidFilter = true;
-})
-.AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+});
 
-var configuration = builder.Configuration;
-
-//Configuracion de correo-------------------------------------/
-var emailConfig = configuration.GetSection("MailSettings").Get<MailSettings>(opt => opt.BindNonPublicProperties = true);
-builder.Services.AddSingleton(emailConfig);
 builder.Services.Configure<FormOptions>(o =>
 {
     o.ValueLengthLimit = int.MaxValue;
@@ -34,18 +33,23 @@ builder.Services.Configure<FormOptions>(o =>
     o.MemoryBufferThreshold = int.MaxValue;
 });
 
-/*------------------------------------------------------------*/
+builder.Services.AddMvc(options =>
+{
+    options.Filters.Add(new IgnoreAntiforgeryTokenAttribute());
+});
 
-//inyeccion de dependencia para poder usar las sesiones
-//builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-//builder.Services.AddTransient<IPrincipal>(
-//    provider => provider.GetService<IHttpContextAccessor>().HttpContext.User);
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("es-PE");
+    options.SupportedCultures = new List<CultureInfo> { new CultureInfo("es-PE") };
+    options.RequestCultureProviders.Clear();
+});
 
 
 //Configuracion ruta de los recursos-------------------------------------/
 var recursos = configuration.GetSection("ResourceDto").Get<ResourceDto>(opt => opt.BindNonPublicProperties = true);
 builder.Services.AddSingleton(recursos);
-
 /*------------------------------------------------------------*/
 
 //Configuracion para el BackEnd-------------------------------------/
@@ -58,8 +62,7 @@ builder.Services.AddAutoMapper(typeof(AutoMapperHelper).GetTypeInfo().Assembly);
 //EF Core - Inyeccion de Dependencia.
 builder.Services.AddRepositories(opt => opt.ConnectionString = backEndConfig.BdSqlServer);
 builder.Services.AddManager();
-//builder.Services.AddTransient<IEmailSender, EmailSender>();
-//builder.Services.AddStorageManager(opt => opt.Type = StorageType.FileStorage);
+builder.Services.AddStorageManager(opt => opt.Type = StorageType.FileStorage);
 
 //Servicio de acceso al contexto
 builder.Services.AddHttpContextAccessor();
@@ -69,7 +72,7 @@ builder.Services.AddSession(
     option =>
     {
         option.Cookie.Name = "Test.Session";
-        option.IdleTimeout = TimeSpan.FromSeconds(600);
+        option.IdleTimeout = TimeSpan.FromSeconds(1000);
         option.Cookie.HttpOnly = true;
         option.Cookie.IsEssential = true;
     }
@@ -78,11 +81,8 @@ builder.Services.AddSession(
 //Filters
 builder.Services.AddScoped<ModelValidationAttribute>();
 
-//builder.Services.AddControllersWithViews()
-
 
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -101,10 +101,11 @@ app.UseAuthorization();
 app.UseSession();
 
 //Llama al migrate del seed.
-await app.MigrateDatabaseAsync();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
+//await app.MigrateDatabaseAsync();
+app.UseEndpoints(endpoints =>
+   {
+       app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+   });
 app.Run();

@@ -41,6 +41,7 @@ namespace MIDIS.SGPVL.AppWeb.Injections
 
             services.AddScoped<IPersonaNaturalRepository,PersonaNaturalRepository >();
             services.AddScoped<IPersonaRepository, PersonaRepository>();
+            services.AddScoped<IDistritoRepository, DistritoRepository>();
 
             services.AddScoped<AdministrativoUnitOfWork>();
             services.AddScoped<ComiteUnitOfWork>();

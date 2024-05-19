@@ -10,6 +10,6 @@ namespace MIDIS.SGPVL.Utils.Helpers.FileManager
         string GetBase64(Stream stream);
         string LoadFileToBase64(string path);
         void SaveFile(string path, string base64, string type);
-        Task<string> SaveFileFormCollection(string path, IFormCollection formCollection);
+        Task<string> SaveFileFormCollection(string path, string fileNameSaved, IFormFile formCollection);
     }
 }

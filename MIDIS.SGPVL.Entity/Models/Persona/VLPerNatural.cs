@@ -16,7 +16,7 @@ namespace MIDIS.SGPVL.Entity.Models.Persona
         public string vNroDocumento { get; set; }
         public bool? bActivo { get; set; }
         public int iTipDocumento { get; set; }
-        public bool? bSexo { get; set; }
+        public int? bSexo { get; set; }
         public string vTelFijo { get; set; }
         public string vCelular { get; set; }
         public string vEmail { get; set; }
@@ -26,6 +26,7 @@ namespace MIDIS.SGPVL.Entity.Models.Persona
 
         public VLPersona iCodPersonaNavigation { get; set; }
         public VLEnumItem iTipDocumentoNavigation { get; set; }
+        public VLEnumItem bSexoNavigation { get; set; }
         public List<VLAdmMiembro> VLAdmMiembros { get; set; }
         public List<VLMiembroJuntum> VLMiembroJunta { get; set; }
         public List<VLSocio> VLSocios { get; set; }

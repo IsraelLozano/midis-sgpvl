@@ -19,14 +19,15 @@ namespace MIDIS.SGPVL.Repository.Maestro
         {
             var listaEntera = listaMaestra.Select(x => (int)x).ToList();
 
-            var lista = await _context.VLEnumItems.Where(p => listaEntera.Contains(p.iIdEnuItem)).OrderBy(l => l.vDescripcion).ToListAsync();
+            var lista = await _context.VLEnumItems.Where(p => listaEntera.Contains(p.iIdEnumerado.Value)).OrderBy(l => l.vDescripcion).ToListAsync();
 
             Dictionary<EnumeradoCabecera, List<VLEnumItem>> listaRes = new Dictionary<EnumeradoCabecera, List<VLEnumItem>>();
 
             foreach (EnumeradoCabecera item in listaMaestra)
             {
                 listaRes.Add(item, (from x in lista
-                                    where x.iIdEnuItem == (int)item && x.bActivo.Value
+                                    where x.iIdEnumerado == (int)item && x.bActivo.Value
+                                    orderby x.iIdEnuItem ascending
                                     select x).ToList());
             }
             return listaRes;

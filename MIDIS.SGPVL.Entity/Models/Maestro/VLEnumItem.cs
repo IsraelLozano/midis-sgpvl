@@ -20,6 +20,7 @@ namespace MIDIS.SGPVL.Entity.Models.Maestro
         public bool? bActivo { get; set; }
 
         public VLEnumerado iIdEnumeradoNavigation { get; set; }
+        public List<VLPerNatural> VLPerNaturalbSexoNavigations { get; set; }
         public List<VLAdmMiembro> VLAdmMiembros { get; set; }
         public List<VLAdministrativo> VLAdministrativos { get; set; }
         public List<VLComVasoLeche> VLComVasoLecheiTipAlimentoNavigations { get; set; }

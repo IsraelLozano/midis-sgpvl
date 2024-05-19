@@ -15,28 +15,17 @@
    "T4TemplatePath": null,
    "Tables": [
       {
-         "Name": "[dbo].[MaeCentroPoblado]",
+         "Name": "[Maestro].[VLEnumItem]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[MaeDepartamento]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[MaeDistrito]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[MaeProvincia]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[ubigeo]",
+         "Name": "[Persona].[VLPerNatural]",
          "ObjectType": 0
       }
    ],
    "UiHint": null,
    "UncountableWords": null,
+   "UseAsyncStoredProcedureCalls": true,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": true,
    "UseDateOnlyTimeOnly": false,

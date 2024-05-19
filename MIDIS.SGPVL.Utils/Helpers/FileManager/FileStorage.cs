@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System.Net.Http.Headers;
 
 namespace MIDIS.SGPVL.Utils.Helpers.FileManager
 {
@@ -15,6 +13,7 @@ namespace MIDIS.SGPVL.Utils.Helpers.FileManager
 
         public string GetBase64(Stream stream)
         {
+            
             byte[] bytes;
             using (var memoryStream = new MemoryStream())
             {
@@ -52,19 +51,16 @@ namespace MIDIS.SGPVL.Utils.Helpers.FileManager
             }
         }
 
-        public async Task<string> SaveFileFormCollection(string path, IFormCollection formCollection)
+        public async Task<string> SaveFileFormCollection(string pathToSave, string fileNameSaved, IFormFile formFile)
         {
-            var file = formCollection.Files.First();
+            var file = formFile;
             var fileNameReturn = string.Empty;
 
-            var extension = Path.GetExtension(file.FileName);
+            if (!Directory.Exists(pathToSave)) Directory.CreateDirectory(pathToSave);
+
             if (file != null && file.Length > 0)
             {
-                //var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                var fileName = $"file_{Guid.NewGuid()}{extension}";
-
-                var fullPath = Path.Combine(path, fileName);
-                fileNameReturn = fileName;
+                var fullPath = Path.Combine(pathToSave, fileNameSaved);
 
                 using (var ms = new MemoryStream())
                 {

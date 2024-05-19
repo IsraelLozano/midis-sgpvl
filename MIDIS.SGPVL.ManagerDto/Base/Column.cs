@@ -1,4 +1,4 @@
-﻿namespace MIDIS.SGPVL.AppWeb.Models
+﻿namespace MIDIS.SGPVL.ManagerDto.Base
 {
     public class Column
     {

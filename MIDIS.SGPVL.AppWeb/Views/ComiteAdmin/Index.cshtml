@@ -1,7 +1,9 @@
-﻿@{
+﻿@model GetAdministrativoFiltersDto
+@{
     ViewData["Title"] = "Comite Admin";
     ViewData["TitleOption"] = "Comite Administrativo";
     ViewData["PageName"] = "comite-admin";
+    var listDpto = new SelectList((List<GetDptoDto>)ViewBag.dptos, nameof(GetDptoDto.id), nameof(GetDptoDto.descripcion));
 }
 
 @section breadcrumb {
@@ -9,20 +11,33 @@
     <li class="position-absolute pos-top pos-right d-none d-sm-block"><span class="js-get-date"></span></li>
 }
 
-
 @section HeadBlock {
     <link rel="stylesheet" media="screen, print" href="~/asset/css/fa-brands.css">
+    <link rel="stylesheet" media="screen, print" href="~/asset/css/fa-solid.css">
     <link rel="stylesheet" media="screen, print" href="~/asset/css/formplugins/select2/select2.bundle.css">
     <link rel="stylesheet" media="screen, print" href="~/asset/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" media="screen, print" href="~/asset/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
 }
 
+<!--Seccion modal-->
+<div class="modal fade" id="modal-container-requer" tabindex="-1" role="dialog" aria-hidden="true">
+    <div id="Contenido" class="modal-dialog modal-lg" role="document">
+    </div>
+</div>
+
+<div class="modal fade" id="modal-members" tabindex="-1" role="dialog" aria-hidden="true">
+    <div id="contenidoMembers" class="modal-dialog modal-lg" role="document">
+    </div>
+</div>
+<!--Seccion modal-->
 <div class="row">
     <div class="col-xl-12">
         <div id="panel-1" class="panel">
             <div class="panel-hdr">
-                <h2>
+                <h2 id="divTitleSeccion">
                     Listado de Comite <span class="fw-300"><i>Administrativo</i></span>
                 </h2>
+
                 <div class="panel-toolbar">
                     <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
                     <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
@@ -31,22 +46,128 @@
             </div>
             <div class="panel-container show">
                 <div class="panel-content">
-                    <table id="dt-basic-example" class="table table-bordered table-hover w-100">
-                        <thead>
-                            <tr>
-                                <th class="width-10">Id</th>
-                                @* <th>Tipo Resolucion</th>
-                                <th>Nro Resolucion</th>
-                                <th>Fecha Emision</th>
-                                <th>Fecha Inicio</th>
-                                <th>Fecha Fin</th>
-                                <th>Nro Miembros</th> *@
-                                @* <th class="text-right">Contacts</th> *@
-                                @* <th>Acciones</th> *@
-                            </tr>
-                        </thead>
+                    <!--BEGIN: PANEL ADMINSTRACION-->
+                    <div id="divTags">
+                        <div class="mb-g">
+                            <div class="row">
+                                <div class="col-sm-6 col-xl-4">
+                                    <div class="form-group">
+                                        <select asp-for="idDptoSelect" asp-items="@listDpto"><option value=""></option></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-xl-4">
+                                    <div class="form-group">
+                                        <select asp-for="idProvSelect"><option value=""></option></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-xl-4">
+                                    <div class="form-group">
+                                        <select asp-for="idUbigeo"><option value=""></option></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="text-center col-sm-12 col-xl-12">
+                                    <button type="button" class="btn btn-primary" style="margin: 5px 0px 5px 5px; min-width: 100px;" id="btnBuscar">
+                                        <i class="fas fa-search mr-1"></i>Buscar
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" style="margin: 5px 0px 5px 5px; min-width: 100px;">
+                                        <i class="fas fa-undo mr-1"></i>Limpiar
+                                    </button>
+                                    <button type="button" class="btn btn-success" data-url='@Url.Action("addComite")' id="btnNuevo" style="margin: 5px 0px 5px 5px; min-width: 100px;">
+                                        <i class="fas fa-plus mr-1"></i>Nuevo
+                                    </button>
 
-                    </table>
+                                    <div class="btn-group" style="margin: 5px 0px 5px 5px; min-width: 100px;">
+                                        <button type="button" class="btn btn-dark">
+                                            <span class="fal fa-file-excel mr-1" style="font-size:large !important; font-weight:550 !important"></span>Exportar
+                                        </button>
+                                        <button type="button" class="btn btn-dark dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <button class="dropdown-item" id="btnExportarComite" data-url="@Url.Action("GetExcelComiteAdministrativoAsync", "ComiteAdmin")">Comites</button>
+                                            <button class="dropdown-item" id="btnExportarMiembro" data-url="@Url.Action("GetExcelComiteMembersAdminiAsync", "ComiteAdmin")">Miembros</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-g">
+                            <div class="table-responsive m-t-40">
+                                <table id="dt-basic-example" class="table table-bordered table-hover table-striped table-sm w-100 display compact">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Ubigeo</th>
+                                            <th>Tipo Resolucion</th>
+                                            <th>Nro Resolucion</th>
+                                            <th>Fecha Emision</th>
+                                            <th>Fecha Inicio</th>
+                                            <th>Fecha Fin</th>
+                                            <th>Vigente</th>
+                                            <th>Nro Miembros</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!--END: PANEL ADMINSTRACION-->
+                    <!--BEGIN: PANEL MEMBERS-->
+                    <div id="divMember">
+                        <div class="mb-g">
+                            <div class="row">
+                                <div class="col-sm-6 col-xl-4">
+                                    <div class="form-group">
+                                        <h5 id="divUbigeoFull"></h5>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6 col-xl-6">
+                                    <div class="form-group">
+                                        <h5 id="dicNroResol"></h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-1">
+
+                                <div class="text-center col-sm-12 col-xl-12">
+                                    <button type="button" class="btn btn-success" data-url='@Url.Action("addMemberModal")' id="btnAddMemberModal" style="margin: 5px 0px 5px 5px; min-width: 100px;">
+                                        <i class="fas fa-plus-circle mr-1"></i> Agregar
+                                    </button>
+                                    <button type="button" class="btn btn-info" id="btnReturn" style="margin: 5px 0px 5px 5px; min-width: 100px;">
+                                        <i class="fas fa-arrow-circle-left mr-1"></i>Regresar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-g">
+                            <div class="table-responsive m-t-40">
+                                <table id="tblMembers" class="table table-bordered table-hover table-striped table-sm w-100 display compact">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Cargo</th>
+                                            <th>Tipo Doc</th>
+                                            <th>Nro Doc.</th>
+                                            <th>Nombre Completo</th>
+                                            <th>Celular</th>
+                                            <th>Designacion Resolucion</th>
+                                            <th>Telef. Fijo</th>
+                                            <th>Correo</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!--END: PANEL MEMBERS-->
+
+                    <span style="text-align:center"></span>
+
                 </div>
             </div>
         </div>
@@ -56,19 +177,165 @@
 
 @section Scripts {
     <script src="~/asset/js/site.js"></script>
+    <script src="~/asset/js/formplugins/select2/select2.bundle.js"></script>
     <script src="~/asset/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/asset/js/dependency/moment/moment.js"></script>
+    <script src="~/asset/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/asset/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.es.min.js"></script>
 
     <script>
 
-        // var table = $("#dt-basic-example").DataTable();
+        //Variales
+        var idComite, rowComiteCurrent;
+        var listDataTable = $('#dt-basic-example').DataTable({ language: { emptyTable: 'No hay registros.' } });
+        var dtMembers = $('#tblMembers').DataTable({
+            searching: false, paging: false, info: false, language: {
+                emptyTable: 'No hay registros.'
+            }
+        });
 
         $(document).ready(function () {
-            var table = $('#dt-basic-example').dataTable({
+            changeTags(true);
+            $('#idDptoSelect').select2({ allowClear: true, placeholder: "---SELECCIONE DPTO---" });
+            $('#idProvSelect').select2({ allowClear: true, placeholder: "---SELECCIONE PROVINCIA---" });
+            $('#idUbigeo').select2({ allowClear: true, placeholder: "---SELECCIONE DISTRITO---" });
+
+            $('#idProvSelect').change(function () {
+                let dpto = $('#idDptoSelect').val();
+                loadUbigeo(dpto, $(this).val(), " ");
+            });
+
+            $('#idDptoSelect').change(function () {
+                loadProvincia($(this).val(), " ");
+            });
+
+            $('#btnNuevo').click(function () {
+                if ($("#idUbigeo").val() == '' || $("#idUbigeo").val() == null) {
+                    Swal.fire('Debe seleccionar un distrito.');
+                    return;
+                }
+                var url = $(this).data('url');
+                $('#modal-container-requer').modal('show');
+                $('#Contenido').html("");
+                $.get(url, { id: 0 }, function (data) {
+                    $('#Contenido').html(data);
+                });
+            });
+
+            $('#btnAddMemberModal').click(function () {
+                var url = $(this).data('url');
+                $('#modal-members').modal('show');
+                $.get(url, { idComite: idComite }, function (data) {
+                    $('#contenidoMembers').html(data);
+                });
+            });
+
+            $('#btnReturn').click(function () {
+                changeTags(true);
+            });
+
+            $('#btnBuscar').click(function () {
+                loadDtComiteAdmin();
+            });
+
+            $('#btnExportarComite').click(function () {
+                var datos = {
+                    idDptoSelect: $("#idDptoSelect").val(),
+                    idProvSelect: $("#idProvSelect").val(),
+                    idUbigeoSelect: $("#idUbigeo").val(),
+                };
+
+                if (datos.idDptoSelect === '') {
+                    Swal.fire(
+                        {
+                            title: "Aviso",
+                            text: "Debe seleccionar al menos un filtro de busqueda.",
+                            icon: "warning",
+                        });
+                    return;
+                }
+                var codigo = '';
+
+                if ($("#idProvSelect").val() == '' || $("#idProvSelect").val() == null) {
+                    codigo = datos.idDptoSelect;
+                } else {
+                    if ($("#idUbigeo").val() == '' || $("#idUbigeo").val() == null) {
+                        codigo = datos.idDptoSelect.concat(datos.idProvSelect)
+                    } else {
+                        codigo = datos.idUbigeoSelect
+                    }
+                }
+
+                var url = $(this).data('url') + "/" + codigo
+
+                window.location = url;
+            });
+
+            $('#btnExportarMiembro').click(function () {
+                var datos = {
+                    idDptoSelect: $("#idDptoSelect").val(),
+                    idProvSelect: $("#idProvSelect").val(),
+                    idUbigeoSelect: $("#idUbigeo").val(),
+                };
+
+                if (datos.idDptoSelect === '') {
+                    Swal.fire(
+                        {
+                            title: "Aviso",
+                            text: "Debe seleccionar al menos un filtro de busqueda.",
+                            icon: "warning",
+                        });
+                    return;
+                }
+
+                var codigo = '';
+
+                if ($("#idProvSelect").val() == '' || $("#idProvSelect").val() == null) {
+                    codigo = datos.idDptoSelect;
+                } else {
+                    if ($("#idUbigeo").val() == '' || $("#idUbigeo").val() == null) {
+                        codigo = datos.idDptoSelect.concat(datos.idProvSelect)
+                    } else {
+                        codigo = datos.idUbigeoSelect
+                    }
+                }
+                var url = $(this).data('url') + "/" + codigo
+
+                window.location = url;
+
+                // $.get(url, function (data) {
+                //     console.info('Reporte  generado...');
+                // });
+            });
+
+
+        });
+
+        function loadDtComiteAdmin() {
+            var datos = {
+                idDptoSelect: $("#idDptoSelect").val(),
+                idProvSelect: $("#idProvSelect").val(),
+                idUbigeo: $("#idUbigeo").val(),
+            };
+
+            if (datos.idDptoSelect === '') {
+                Swal.fire(
+                    {
+                        title: "Aviso",
+                        text: "Debe seleccionar al menos un filtro de busqueda.",
+                        icon: "warning",
+                    });
+                return;
+            }
+
+            listDataTable.destroy();
+            listDataTable = $('#dt-basic-example').DataTable({
                 language: {
                     processing: "Procesando...",
-                    search: "Busqueda&nbsp;:",
-                    lengthMenu: "Mostrando _MENU_ reg. por pagina",
-                    info: "Mostrando pag. _PAGE_ de _PAGES_ - Total _TOTAL_ registros",
+                    // search: "Busqueda&nbsp;:",
+                    searchPlaceholder: 'Buscar por nro resolucion',
+                    lengthMenu: "_MENU_ reg. por pag",
+                    info: "Pag. _PAGE_ de _PAGES_ - Total _TOTAL_ registros",
                     infoEmpty: "No hay registros empty",
                     infoFiltered: "(filtrados de _MAX_ total de reg.)",
                     infoPostFix: "",
@@ -96,38 +363,169 @@
                 "ajax": {
                     "url": "@Url.Action("IndexData", "ComiteAdmin")",
                     "type": "POST",
+                    "data": datos,
                     "datatype": "json"
                 },
 
                 "columns": [
-                    { "data": "iIdComite" },
-                    // { "data": "nombre", "name": "Nombre", "autoWidth": true },
-                    // { "data": "sigla", "title": "Sigla", "name": "Sigla", "autoWidth": true },
-                    // { "data": "dependencia", "name": "Dependencia", "autoWidth": true },
-                    // { "data": "activo", "name": "Activo", "autoWidth": true },
-                    // {
-                    //     data: null,
-                    //     className: "center",
-                    //     defaultContent: "<button title='Editar' class='btn btn-primary btn-rounded btn-sm'><i class='fa fa-pencil'></i></button><button title='Eliminar' class='btn btn-danger btn-rounded btn-sm'><i class='fa fa-trash-o'></i></button>",
-                    //     targets: -1
-                    // }
+                    { "data": "iIdComite", "autoWidth": true },
+                    { "data": "ubigeoFull", "autoWidth": true },
+                    { "data": "iTipResolucionNavigation.descripcion", "autoWidth": true },
+                    { "data": "vNumResolucion", "autoWidth": true, render: formatterDownLoadFile },
+                    { "data": "dFecEmision", "autoWidth": true },
+                    { "data": "dFecInicio", "autoWidth": true },
+                    { "data": "dFecFin", "autoWidth": true },
+                    {
+                        "data": "bVigente", "autoWidth": true, "render": function (data, type, row) {
+                            if (row.bVigente) {
+                                return '<strong class="text-info">SI</strong>';
+                            } else {
+                                return '<strong class="title">NO</strong>';
+                            }
+                        }
+                    },
+                    { "data": "iNumMiembro", "autoWidth": true },
+                    { "data": "iIdComite", "render": formatterAcciones }
                 ],
-                // 'createdRow': function (row, data, dataIndex) {
-                createdRow: function (row, data, type, name) {
-                    console.log(data)
-                    
-                },
 
-
-                // "columnDefs": [
-                //     { className: "text-center", "targets": [0, 4, 5] },
-
-                // ],
+                "columnDefs": [
+                    { className: "text-center", "targets": [0, 3, 4, 5, 6, 7] },
+                    { className: "text-center", "targets": [9] },
+                    {
+                        targets: [4, 5, 6],
+                        render: fnRenderDate
+                    }
+                ],
                 searchDelay: 350
             });
+        }
 
-            // console.log(table.data)
+        const formatterAcciones = (data, type, row, index) => {
+            var edit = '<button type="button" title="Editar" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" onclick="editAdmin(' + row.iIdComite + ');" ><i class="fal fa-pencil"></i></button>';
+            var member = edit + '<button type="button" title="Agregar Miembro" class="btn btn-sm btn-icon btn-success rounded-circle mr-1" onclick="getMember(' + row.iIdComite + ',' + index.row + ');"><i class="fal fa-user"></i></button>';
+            var remove = member + '<button type="button" title="Eliminar" class="btn btn-sm btn-icon btn-outline-danger rounded-circle mr-1"><i class="fal fa-times"></i></button>';
+            return remove;
+        }
+
+        function formatterDownLoadFile(data, type, row, index) {
+            var link = '@Url.Action("downloadResolucionAsync", "ComiteAdmin", new { id = "-1" })';
+            link = link.replace("-1", row.iIdComite);
+            var textHtml = '<a title="Editar" href="' + link + '">' + row.vNumResolucion + '</a>';
+            return textHtml;
+        }
+
+        const fnRenderDate = (data, type, row) => {
+            return moment(data).format('DD/MM/YYYY');
+        };
+
+        function loadData() {
+            listDataTable.ajax.reload();
+        }
+
+        function loadDataMember(entidad) {
+            var dataSet = listDataTable.rows().data();
+            const first = entidad.find(() => true)
+            var fila = dataSet.toArray().findIndex(l => l.iIdComite === first.iIdComite);
+            listDataTable.row(fila).data().VLAdmMiembros = entidad;
+
+            dtMembers.destroy();
+            dtMembers = $('#tblMembers').DataTable({
+                processing: true,
+                searching: false,
+                paging: false,
+                info: false,
+                data: entidad,
+                "columns": [
+                    { "autoWidth": true, "data": "iIdMiembro" },
+                    { "autoWidth": true, "data": "iTipCargoNavigation.descripcion" },
+                    { "autoWidth": true, "data": "iCodPersonaNavigation.iTipDocumentoNavigation.descripcion" },
+                    { "autoWidth": true, "data": "iCodPersonaNavigation.vNroDocumento" },
+                    { "autoWidth": true, "data": "iIdMiembro", render: formatterConcat },
+                    { "autoWidth": true, "data": "iCodPersonaNavigation.vCelular" },
+                    { "autoWidth": true, "data": "bDesigResolucion" },
+                    { "autoWidth": true, "data": "iCodPersonaNavigation.vTelFijo" },
+                    { "autoWidth": true, "data": "iCodPersonaNavigation.vEmail" },
+                    { className: "center", "data": "iIdComite", "render": formatterAccionesMembers }
+                ]
+            });
+        };
+
+        function getMember(id, fila) {
+            changeTags(false);
+            var dataSet = listDataTable.row(fila).data();
+            var entidad = dataSet.VLAdmMiembros;
+            idComite = id;
+            if (entidad.length > 0) {
+                loadDataMember(entidad);
+            } else {
+
+                dtMembers.context[0].oLanguage.sEmptyTable = "No existen registros";
+                dtMembers.clear().draw();
+            }
+            var textUbigeoFull = 'Ubigeo: <span class="fw-300"><i>' + dataSet.ubigeoFull + '</i></span>'
+            var nroResolucion = 'Resolucion: <span class="fw-300"><i>' + dataSet.iTipResolucionNavigation.descripcion + '- ' + dataSet.vNumResolucion + '</i></span>'
+            $("#divUbigeoFull").html(textUbigeoFull)
+            $("#dicNroResol").html(nroResolucion)
+            rowComiteCurrent = fila;
+        };
+
+        const editAdmin = (id) => {
+            var url = "@Url.Action("addComite", "ComiteAdmin")";
+            $('#modal-container-requer').modal('show');
+            $.get(url, { id: id }, function (data) {
+                $('#Contenido').html(data);
+            });
+        };
+
+        const formatterConcat = (data, type, row) => {
+            return "" + row.iCodPersonaNavigation.vApePaterno + ' ' + row.iCodPersonaNavigation.vApeMaterno + ', ' + row.iCodPersonaNavigation.vNombre + "";
+        };
+
+        const formatterAccionesMembers = (data, type, row, index) => {
+            var edit = '<button type="button" title="Editar" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1"><i class="fal fa-pencil"></i></button>';
+            var remove = edit + '<button type="button" title="Eliminar" class="btn btn-sm btn-icon btn-outline-danger rounded-circle mr-1"><i class="fal fa-times"></i></button>';
+            return remove;
+        }
+
+        const loadUbigeo = (dpto, prov, value) => {
+            $.get("@Url.Action("getDistritoByDptoProv", "Maestro")" + "/" + dpto + "/" + prov, function (data) {
+                $("#idUbigeo").empty();
+                $.each(data, function (index, row) {
+                    $("#idUbigeo").append($("<option />").val(this.codigo).text(this.descripcion));
+                });
+                if (value != "") $("#idUbigeo").val(value);
+                $('#idUbigeo').select2({ allowClear: true, placeholder: "---SELECCIONE DISTRITO---" });
+            })
+        };
+
+        const loadProvincia = (id, value) => {
+            $.get("@Url.Action("getProvinciaByDpto", "Maestro")" + "/" + id, function (data) {
+                $("#idProvSelect").empty();
+                $.each(data, function (index, row) {
+                    $("#idProvSelect").append($("<option />").val(this.id).text(this.Descripcion));
+                });
+                if (value != "") $("#idProvSelect").val(value);
+                $('#idProvSelect').select2({ allowClear: true, placeholder: "---SELECCIONE PROVINCIA---" });
+            })
+        };
+
+        const changeTags = (esChange) => {
+            var seccionTitle = '';
+            if (esChange) {
+                seccionTitle = 'Listado de Comite <span class="fw-300"><i>Administrativo</i></span>'
+                $('#divMember').hide()
+                $('#divTags').show();
+            } else {
+                seccionTitle = 'Listado de Miembros del Comite <span class="fw-300"><i>Administrativo</i></span>'
+                $('#divTags').hide();
+                $('#divMember').show();
+            }
+            $('#divTitleSeccion').html(seccionTitle);
+        }
+
+        $(function () {
+            loadDtComiteAdmin();
         })
-    </script>
 
+    </script>
 }

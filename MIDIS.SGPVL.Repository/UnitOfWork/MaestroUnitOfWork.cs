@@ -14,6 +14,7 @@ namespace MIDIS.SGPVL.Repository.UnitOfWork
         public IDepartamentoRepository _departamentoRepository { get; }
         public IProvinciaRepository _provinciaRepository { get; }
         public IUbigeoRepository _ubigeoRepository { get; }
+        public IDistritoRepository  _distritoRepository { get; }
 
         public MaestroUnitOfWork(BDPVLContext context,
             IEnumeradoRepository enumeradoRepository,
@@ -21,7 +22,8 @@ namespace MIDIS.SGPVL.Repository.UnitOfWork
             ICentroPobladoRepository centroPobladoRepository,
             IDepartamentoRepository departamentoRepository,
             IProvinciaRepository provinciaRepository,
-            IUbigeoRepository ubigeoRepository)
+            IUbigeoRepository ubigeoRepository,
+            IDistritoRepository distritoRepository)
         {
             _context = context;
             _enumeradoRepository = enumeradoRepository;
@@ -30,6 +32,7 @@ namespace MIDIS.SGPVL.Repository.UnitOfWork
             _departamentoRepository = departamentoRepository;
             _provinciaRepository = provinciaRepository;
             _ubigeoRepository = ubigeoRepository;
+            _distritoRepository = distritoRepository;
         }
 
 

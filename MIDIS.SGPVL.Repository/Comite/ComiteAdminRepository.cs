@@ -8,6 +8,7 @@ namespace MIDIS.SGPVL.Repository.Comite
     {
         public ComiteAdminRepository(BDPVLContext context) : base(context)
         {
+
         }
     }
 }

@@ -23,18 +23,95 @@ namespace MIDIS.SGPVL.Manager.Maestro
         {
             try
             {
-                var querys = _unitOfWork._ubigeoRepository.GetAll(l => l.cod_prov_inei.Equals(codProv));
+                var querys = _unitOfWork._ubigeoRepository.GetAll(l => l.cod_prov_inei.Equals(codProv), orderBy: l => l.OrderBy(s => s.desc_prov_inei));
                 var response = _mapper.Map<List<GetUbigeoDto>>(querys);
                 return response;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
-
         }
 
+        public async Task<List<GetProvinciaDto>> getProvinciaByDpto(string codDpto)
+        {
+            try
+            {
+                var querys = _unitOfWork._provinciaRepository
+                    .GetAll(l => l.vCodigoDepartamento.Equals(codDpto) && !l.vCodigoProvincia.Equals("00"), orderBy: l => l.OrderBy(s => s.vDescripcion));
+                var response = _mapper.Map<List<GetProvinciaDto>>(querys);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<GetDistritoDto>> getDistritoByDptoProv(string codDpto, string codProv)
+        {
+            try
+            {
+                var querys = _unitOfWork._distritoRepository
+                    .GetAll(l =>
+                    l.vCodigoDepartamento.Equals(codDpto) &&
+                    l.vCodigoProvincia.Equals(codProv) &&
+                    !l.vCodigoDistrito.Equals("00"), orderBy: l => l.OrderBy(s => s.vDescripcion));
+
+                var response = _mapper.Map<List<GetDistritoDto>>(querys);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<GetCentroPobladoDto>> getCentroPobladoByDistrito(string codDistrito)
+        {
+            try
+            {
+                var querys = _unitOfWork._centroPobladoRepository
+                    .GetAll(l =>
+                    l.vUbigeo.StartsWith(codDistrito), orderBy: l => l.OrderBy(s => s.vCentroPoblado));
+
+                var response = _mapper.Map<List<GetCentroPobladoDto>>(querys);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<GetDistritoDto>> getDistritoFull(List<string> ubigeo)
+        {
+            try
+            {
+                var querys = await _unitOfWork._distritoRepository.GetDistritoFullByParamAsync(ubigeo);
+                var response = _mapper.Map<List<GetDistritoDto>>(querys);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        
+        
+        public async Task<List<GetCentroPobladoDto>> getCentroPobladoFull(List<string> codCentPoblados)
+        {
+            try
+            {
+                var querys = _unitOfWork._centroPobladoRepository.GetAll(l => codCentPoblados.Contains(l.vUbigeo));
+                var response = _mapper.Map<List<GetCentroPobladoDto>>(querys);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         #endregion
 
         #region Enumerados

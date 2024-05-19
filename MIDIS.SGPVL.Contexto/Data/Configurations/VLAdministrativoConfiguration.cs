@@ -16,7 +16,7 @@ namespace MIDIS.SGPVL.Contexto.Data.Configurations
             entity.Property(e => e.dFecInicio).HasColumnType("date");
             entity.Property(e => e.dFecModifica).HasColumnType("datetime");
             entity.Property(e => e.dFecRegistro).HasColumnType("datetime");
-            entity.Property(e => e.iNumMiembro).HasMaxLength(50).IsUnicode(false);
+            //entity.Property(e => e.iNumMiembro).IsRequired();
             entity.Property(e => e.vUbigeo).HasMaxLength(30);
             entity.Property(e => e.vNomArcGuid).IsRequired().HasMaxLength(250).IsUnicode(false);
             entity.Property(e => e.vNomArchivo).IsRequired().HasMaxLength(250).IsUnicode(false);

@@ -22,6 +22,12 @@ namespace MIDIS.SGPVL.Contexto.Data.Configurations
             entity.Property(e => e.vNroDocumento).IsRequired().HasMaxLength(9).IsUnicode(false);
             entity.Property(e => e.vTelFijo).HasMaxLength(20).IsUnicode(false);
 
+            entity.HasOne(d => d.bSexoNavigation)
+                .WithMany(p => p.VLPerNaturalbSexoNavigations)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasForeignKey(d => d.bSexo)
+                .HasConstraintName("FK_VLPerNatural_VLEnumItem");
+
             entity.HasOne(d => d.iCodPersonaNavigation)
                 .WithOne(p => p.VLPerNatural)
                 .HasForeignKey<VLPerNatural>(d => d.iCodPersona)

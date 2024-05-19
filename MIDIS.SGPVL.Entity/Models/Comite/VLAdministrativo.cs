@@ -14,7 +14,7 @@ namespace MIDIS.SGPVL.Entity.Models.Comite
         public DateTime dFecFin { get; set; }
         public bool? bVigente { get; set; }
         public string vUbigeo { get; set; }
-        public string iNumMiembro { get; set; }
+        public int iNumMiembro { get; set; }
         public string vNomArchivo { get; set; }
         public string vNomArcGuid { get; set; }
         public string vObservacion { get; set; }

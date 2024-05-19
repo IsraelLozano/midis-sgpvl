@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ComitePvl\NewFolder\**" />
+    <EmbeddedResource Remove="ComitePvl\NewFolder\**" />
+    <None Remove="ComitePvl\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
@@ -15,9 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ComiteAdmin\Add\" />
-    <Folder Include="ComitePvl\" />
-    <Folder Include="Maestro\Add\" />
+    <Folder Include="Maestro\Cmd\" />
+    <Folder Include="Base\" />
   </ItemGroup>
 
 </Project>

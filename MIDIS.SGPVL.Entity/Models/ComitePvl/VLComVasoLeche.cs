@@ -11,7 +11,7 @@ namespace MIDIS.SGPVL.Entity.Models.ComitePvl
         public int iTipAlimento { get; set; }
         public string vCodComite { get; set; }
         public string vUbigeo { get; set; }
-        public int? iCodCentPoblado { get; set; }
+        public string vCodCentPoblado { get; set; }
         public string vNomComite { get; set; }
         public bool? bActivo { get; set; }
         public int? iNumSocio { get; set; }

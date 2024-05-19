@@ -34,7 +34,12 @@ namespace MIDIS.SGPVL.Utils.Helpers.FileManager
             throw new NotImplementedException();
         }
 
-        public Task<string> SaveFileFormCollection(string path, IFormCollection formCollection)
+        //public Task<string> SaveFileFormCollection(string path, IFormCollection formCollection)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        public Task<string> SaveFileFormCollection(string path, string fileNameSaved, IFormFile formCollection)
         {
             throw new NotImplementedException();
         }

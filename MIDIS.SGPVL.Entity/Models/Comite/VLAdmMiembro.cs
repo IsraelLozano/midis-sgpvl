@@ -2,6 +2,7 @@
 #nullable disable
 using MIDIS.SGPVL.Entity.Models.Maestro;
 using MIDIS.SGPVL.Entity.Models.Persona;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MIDIS.SGPVL.Entity.Models.Comite
 {
@@ -22,5 +23,16 @@ namespace MIDIS.SGPVL.Entity.Models.Comite
         public VLPerNatural iCodPersonaNavigation { get; set; }
         public VLAdministrativo iIdComiteNavigation { get; set; }
         public VLEnumItem iTipCargoNavigation { get; set; }
+
+
+        #region Adicionales
+        [NotMapped]
+        public string dpto { get; set; }
+        [NotMapped]
+        public string provincia { get; set; }
+        [NotMapped]
+        public string distrito { get; set; }
+
+        #endregion
     }
 }

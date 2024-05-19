@@ -1,0 +1,95 @@
+﻿@model int
+
+@{
+    ViewData["Title"] = "Miembro Comite Admin";
+    ViewData["TitleOption"] = "Miembro del Comite Administrativo";
+    ViewData["PageName"] = "comite-admin";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section breadcrumb {
+    <li class="breadcrumb-item">Miembro del Comite Administrativo</li>
+    <li class="position-absolute pos-top pos-right d-none d-sm-block"><span class="js-get-date"></span></li>
+}
+
+
+@* @section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/asset/css/fa-brands.css">
+    <link rel="stylesheet" media="screen, print" href="~/asset/css/formplugins/select2/select2.bundle.css">
+    <link rel="stylesheet" media="screen, print" href="~/asset/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" media="screen, print" href="~/asset/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+} *@
+
+<!--Seccion modal-->
+<div class="modal fade" id="modal-container-requer" tabindex="-1" role="dialog" aria-hidden="true">
+    <div id="Contenido" class="modal-dialog modal-lg" role="document">
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr">
+                <h2>
+                    Listado de Comite <span class="fw-300"><i>Administrativo</i></span>
+                </h2>
+                <div class="panel-toolbar">
+                    <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+                    <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+                    <button class="btn btn-panel" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+                </div>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    <div class="mb-g">
+                        <div class="row">
+                            <div class="col-sm-6 col-xl-4">
+                                <div class="form-group">
+                                    @Model.ToString()
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-xl-4">
+                                <div class="form-group">
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-xl-4">
+                                <div class="form-group">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="text-center col-sm-12 col-xl-12">
+                                <button type="button" class="btn btn-success" data-url='@Url.Action("addComite")' id="btnNuevo">Nuevo</button>
+                                <button type="button" class="btn btn-warning">Regresar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-g">
+                        <div class="table-responsive m-t-40">
+                            <table id="dt-basic-example" class="table table-bordered table-hover table-striped table-sm w-100 display compact">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Cargo</th>
+                                        <th>Tipo Doc</th>
+                                        <th>Nro Doc</th>
+                                        <th>Nombre Completo</th>
+                                        <th>Celular</th>
+                                        <th>Designacion Resol.</th>
+                                        <th>Telf. Fijo</th>
+                                        <th>Correo</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
