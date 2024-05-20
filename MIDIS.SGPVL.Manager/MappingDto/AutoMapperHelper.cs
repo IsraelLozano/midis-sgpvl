@@ -85,6 +85,11 @@ namespace MIDIS.SGPVL.Manager.MappingDto
             CreateMap<VLMiembroJuntum, CmdMiembroJdDto>().ReverseMap();
 
 
+            //Socios
+            CreateMap<VLSocio, GetSocioDto>();
+            CreateMap<VLSocio, CmdSocioDto>().ReverseMap();
+
+
             #endregion
         }
     }

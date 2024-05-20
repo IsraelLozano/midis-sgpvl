@@ -1,4 +1,7 @@
-﻿
+﻿@using MIDIS.SGPVL.ManagerDto.ComitePvl.Get
+
+@model GetComiteParams;
+
 
 @{
     ViewData["Title"] = "Comite PVL";
@@ -53,19 +56,25 @@
                     <div id="divTags">
                         <div class="mb-g">
                             <div class="row">
-                                <div class="col-sm-6 col-xl-4">
+                                <div class="col-sm-3 col-xl-3">
                                     <div class="form-group">
-                                        @* <select asp-for="idDptoSelect" asp-items="@listDpto"><option value=""></option></select> *@
+                                        <select asp-for="idDptoSelect" asp-items="@ViewBag.dpto"><option value=""></option></select>
                                     </div>
                                 </div>
-                                <div class="col-sm-6 col-xl-4">
+                                <div class="col-sm-3 col-xl-3">
                                     <div class="form-group">
-                                        @* <select asp-for="idProvSelect"><option value=""></option></select> *@
+                                        <select asp-for="idProvSelect"><option value=""></option></select>
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-xl-4">
+                                <div class="col-sm-3 col-xl-3">
                                     <div class="form-group">
-                                        @* <select asp-for="idUbigeo"><option value=""></option></select> *@
+                                        <select asp-for="idUbigeo"><option value=""></option></select>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3 col-xl-3">
+                                    <div class="form-group">
+                                        <select asp-for="idCentroPoblado"><option value=""></option></select>
                                     </div>
                                 </div>
                             </div>
@@ -98,18 +107,18 @@
                         </div>
                         <div class="mb-g">
                             <div class="table-responsive m-t-40">
-                                <table id="dt-basic-example" class="table table-bordered table-hover table-striped table-sm w-100 display compact">
+                                <table id="dtComitePvl" class="table table-bordered table-hover table-striped table-sm w-100 display compact">
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>Ubigeo</th>
-                                            <th>Tipo Resolucion</th>
-                                            <th>Nro Resolucion</th>
-                                            <th>Fecha Emision</th>
-                                            <th>Fecha Inicio</th>
-                                            <th>Fecha Fin</th>
-                                            <th>Vigente</th>
-                                            <th>Nro Miembros</th>
+                                            <th>Codigo</th>
+                                            <th>Dpto/Provincia/Distrito</th>
+                                            <th>C. Poblado</th>
+                                            <th>OSB</th>
+                                            <th>Estado Comite</th>
+                                            <th>Presidente (a) o Coordinador (a)</th>
+                                            <th>Nro Socio</th>
+                                            <th>Nro Usuarios</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -119,54 +128,54 @@
                     </div>
                     <!--END: PANEL ADMINSTRACION-->
                     <!--BEGIN: PANEL MEMBERS-->
-                    <div id="divMember">
-                        <div class="mb-g">
-                            <div class="row">
-                                <div class="col-sm-6 col-xl-4">
-                                    <div class="form-group">
-                                        <h5 id="divUbigeoFull"></h5>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-6 col-xl-6">
-                                    <div class="form-group">
-                                        <h5 id="dicNroResol"></h5>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-1">
-
-                                <div class="text-center col-sm-12 col-xl-12">
-                                    <button type="button" class="btn btn-success" data-url='@Url.Action("addMemberModal")' id="btnAddMemberModal" style="margin: 5px 0px 5px 5px; min-width: 100px;">
-                                        <i class="fas fa-plus-circle mr-1"></i> Agregar
-                                    </button>
-                                    <button type="button" class="btn btn-info" id="btnReturn" style="margin: 5px 0px 5px 5px; min-width: 100px;">
-                                        <i class="fas fa-arrow-circle-left mr-1"></i>Regresar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-g">
-                            <div class="table-responsive m-t-40">
-                                <table id="tblMembers" class="table table-bordered table-hover table-striped table-sm w-100 display compact">
-                                    <thead>
-                                        <tr>
-                                            <th>Id</th>
-                                            <th>Cargo</th>
-                                            <th>Tipo Doc</th>
-                                            <th>Nro Doc.</th>
-                                            <th>Nombre Completo</th>
-                                            <th>Celular</th>
-                                            <th>Designacion Resolucion</th>
-                                            <th>Telef. Fijo</th>
-                                            <th>Correo</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                        </div>
+                    @* <div id="divMember">
+                    <div class="mb-g">
+                    <div class="row">
+                    <div class="col-sm-6 col-xl-4">
+                    <div class="form-group">
+                    <h5 id="divUbigeoFull"></h5>
                     </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl-6">
+                    <div class="form-group">
+                    <h5 id="dicNroResol"></h5>
+                    </div>
+                    </div>
+                    </div>
+                    <div class="row mt-1">
+
+                    <div class="text-center col-sm-12 col-xl-12">
+                    <button type="button" class="btn btn-success" data-url='@Url.Action("addMemberModal")' id="btnAddMemberModal" style="margin: 5px 0px 5px 5px; min-width: 100px;">
+                    <i class="fas fa-plus-circle mr-1"></i> Agregar
+                    </button>
+                    <button type="button" class="btn btn-info" id="btnReturn" style="margin: 5px 0px 5px 5px; min-width: 100px;">
+                    <i class="fas fa-arrow-circle-left mr-1"></i>Regresar
+                    </button>
+                    </div>
+                    </div>
+                    </div>
+                    <div class="mb-g">
+                    <div class="table-responsive m-t-40">
+                    <table id="tblMembers" class="table table-bordered table-hover table-striped table-sm w-100 display compact">
+                    <thead>
+                    <tr>
+                    <th>Id</th>
+                    <th>Codigo</th>
+                    <th>Ubiego</th>
+                    <th>Nro Doc.</th>
+                    <th>Nombre Completo</th>
+                    <th>Celular</th>
+                    <th>Designacion Resolucion</th>
+                    <th>Telef. Fijo</th>
+                    <th>Correo</th>
+                    <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    </table>
+                    </div>
+                    </div>
+                    </div> *@
                     <!--END: PANEL MEMBERS-->
 
                     <span style="text-align:center"></span>
@@ -178,16 +187,201 @@
 </div>
 
 
+@section Scripts {
+    <script src="~/asset/js/site.js"></script>
+    <script src="~/asset/js/formplugins/select2/select2.bundle.js"></script>
+    <script src="~/asset/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/asset/js/dependency/moment/moment.js"></script>
+    <script src="~/asset/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/asset/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.es.min.js"></script>
+
+    <script>
+        var listDataTable = $('#dtComitePvl').DataTable({ language: { emptyTable: 'No hay registros.' } });
+        $(document).ready(function () {
+            $('#idDptoSelect').select2({ allowClear: true, placeholder: "---SELECCIONE DPTO---" });
+            $('#idProvSelect').select2({ allowClear: true, placeholder: "---SELECCIONE PROVINCIA---" });
+            $('#idUbigeo').select2({ allowClear: true, placeholder: "---SELECCIONE DISTRITO---" });
+            $('#idCentroPoblado').select2({ allowClear: true, placeholder: "---SELECCIONE CENTRO POBLADO---" });
+
+            $('#idProvSelect').change(function () {
+                let dpto = $('#idDptoSelect').val();
+                loadUbigeo(dpto, $(this).val(), " ");
+            });
+
+            $('#idDptoSelect').change(function () {
+                loadProvincia($(this).val(), " ");
+            });
+            $('#idUbigeo').change(function () {
+                loadCentroPoblado($(this).val(), " ");
+            });
+
+            $('#btnBuscar').click(function () {
+                loadDtComiteAdmin();
+            });
+
+            $('#btnNuevo').click(function () {
+                if ($("#idUbigeo").val() == '' || $("#idUbigeo").val() == null) {
+                    Swal.fire('Debe seleccionar un distrito.');
+                    return;
+                }
+                
+                if ($("#idCentroPoblado").val() == '' || $("#idCentroPoblado").val() == null) {
+                    Swal.fire('Debe seleccionar un centro poblado.');
+                    return;
+                }
+                var url = $(this).data('url');
+                $('#modal-container-requer').modal('show');
+                $('#Contenido').html("");
+                $.get(url, { id: 0 }, function (data) {
+                    $('#Contenido').html(data);
+                });
+            });
+        });
+
+        function loadDtComiteAdmin() {
+            var datos = {
+                idDptoSelect: $("#idDptoSelect").val(),
+                idProvSelect: $("#idProvSelect").val(),
+                idUbigeo: $("#idUbigeo").val(),
+            };
+
+            if (datos.idDptoSelect === '') {
+                Swal.fire(
+                    {
+                        title: "Aviso",
+                        text: "Debe seleccionar al menos un filtro de busqueda.",
+                        icon: "warning",
+                    });
+                return;
+            }
+
+            listDataTable.destroy();
+            listDataTable = $('#dtComitePvl').DataTable({
+                language: {
+                    processing: "Procesando...",
+                    // search: "Busqueda&nbsp;:",
+                    searchPlaceholder: 'Buscar por nro resolucion',
+                    lengthMenu: "_MENU_ reg. por pag",
+                    info: "Pag. _PAGE_ de _PAGES_ - Total _TOTAL_ registros",
+                    infoEmpty: "No hay registros empty",
+                    infoFiltered: "(filtrados de _MAX_ total de reg.)",
+                    infoPostFix: "",
+                    loadingRecords: "Cargando los registros...",
+                    zeroRecords: "No hay registros",
+                    emptyTable: "No hay datos",
+                    paginate: {
+                        first: "Primero",
+                        previous: "Previo",
+                        next: "Siguiente",
+                        last: "Ultimo"
+                    },
+                    aria: {
+                        sortAscending: ": activer pour trier la colonne par ordre croissant",
+                        sortDescending: ": activer pour trier la colonne par ordre décroissant"
+                    },
+                    decimal: "."
+                },
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "pageLength": 10,
+
+                "ajax": {
+                    "url": "@Url.Action("IndexData", "ComitePvl")",
+                    "type": "POST",
+                    "data": datos,
+                    "datatype": "json"
+                },
+
+                "columns": [
+                    { "data": "vCodComite", "autoWidth": true },
+                    { "data": "ubigeoFull", "autoWidth": true },
+                    { "data": "centroPobladoFull", "autoWidth": true },
+                    { "data": "iTipOsbNavigation.descripcion", "autoWidth": true },
+                    { "data": "vNomComite", "autoWidth": true },
+                    {
+                        "data": "bActivo", "autoWidth": true, "render": function (data, type, row) {
+                            if (row.bVigente) {
+                                return '<strong class="text-info">SI</strong>';
+                            } else {
+                                return '<strong class="title">NO</strong>';
+                            }
+                        }
+                    },
+                    { "data": "iNumSocio", "autoWidth": true },
+                    { "data": "iNumUsuario", "autoWidth": true },
+                    { "data": "iCodComVasLeche", "autoWidth": true},
+                    { "data": "iCodComVasLeche", "render": formatterAcciones }
+                ],
+
+                // "columnDefs": [
+                //     { className: "text-center", "targets": [0, 3, 4, 5, 6, 7] },
+                //     { className: "text-center", "targets": [9] },
+                //     {
+                //         targets: [4, 5, 6],
+                //         render: fnRenderDate
+                //     }
+                // ],
+                searchDelay: 350
+            });
+        }
+
+        const formatterAcciones = (data, type, row, index) => {
+            var edit = '<button type="button" title="Editar" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" onclick="editAdmin(' + row.iCodComVasLeche + ');" ><i class="fal fa-pencil"></i></button>';
+            var member = edit + '<button type="button" title="Agregar Miembro" class="btn btn-sm btn-icon btn-success rounded-circle mr-1" onclick="getMember(' + row.iCodComVasLeche + ',' + index.row + ');"><i class="fal fa-user"></i></button>';
+            var remove = member + '<button type="button" title="Eliminar" class="btn btn-sm btn-icon btn-outline-danger rounded-circle mr-1"><i class="fal fa-times"></i></button>';
+            return remove;
+        }
+
+        const loadUbigeo = (dpto, prov, value) => {
+            $.get("@Url.Action("getDistritoByDptoProv", "Maestro")" + "/" + dpto + "/" + prov, function (data) {
+                $("#idUbigeo").empty();
+                $.each(data, function (index, row) {
+                    $("#idUbigeo").append($("<option />").val(this.codigo).text(this.descripcion));
+                });
+                if (value != "") $("#idUbigeo").val(value);
+                $('#idUbigeo').select2({ allowClear: true, placeholder: "---SELECCIONE DISTRITO---" });
+            })
+        };
+
+        const loadCentroPoblado = (id, value) => {
+            $.get("@Url.Action("getCentroPobladoByDistrito", "Maestro")" + "/" + id, function (data) {
+                $("#idCentroPoblado").empty();
+                $.each(data, function (index, row) {
+                    $("#idCentroPoblado").append($("<option />").val(this.codigo).text(this.descripcion));
+                });
+                if (value != "") $("#idCentroPoblado").val(value);
+                $('#idCentroPoblado').select2({ allowClear: true, placeholder: "---SELECCIONE DISTRITO---" });
+            })
+        };
+
+        const loadProvincia = (id, value) => {
+            $.get("@Url.Action("getProvinciaByDpto", "Maestro")" + "/" + id, function (data) {
+                $("#idProvSelect").empty();
+                $.each(data, function (index, row) {
+                    $("#idProvSelect").append($("<option />").val(this.id).text(this.Descripcion));
+                });
+                if (value != "") $("#idProvSelect").val(value);
+                $('#idProvSelect').select2({ allowClear: true, placeholder: "---SELECCIONE PROVINCIA---" });
+            })
+        };
+
+
+        $(function () {
+            loadDtComiteAdmin();
+        })
+    </script>
+}
 @* @section Scripts {
     <script src="~/asset/js/site.js"></script>
     <script src="~/asset/js/formplugins/select2/select2.bundle.js"></script>
     <script src="~/asset/js/datagrid/datatables/datatables.bundle.js"></script>
     <script src="~/asset/js/dependency/moment/moment.js"></script>
     <script src="~/asset/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
-    <script src="~/asset/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.es.min.js"></script> 
+    <script src="~/asset/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.es.min.js"></script>
 
     <script>
-
         //Variales
         var idComite, rowComiteCurrent;
         var listDataTable = $('#dt-basic-example').DataTable({ language: { emptyTable: 'No hay registros.' } });
@@ -199,31 +393,6 @@
 
         $(document).ready(function () {
             changeTags(true);
-            $('#idDptoSelect').select2({ allowClear: true, placeholder: "---SELECCIONE DPTO---" });
-            $('#idProvSelect').select2({ allowClear: true, placeholder: "---SELECCIONE PROVINCIA---" });
-            $('#idUbigeo').select2({ allowClear: true, placeholder: "---SELECCIONE DISTRITO---" });
-
-            $('#idProvSelect').change(function () {
-                let dpto = $('#idDptoSelect').val();
-                loadUbigeo(dpto, $(this).val(), " ");
-            });
-
-            $('#idDptoSelect').change(function () {
-                loadProvincia($(this).val(), " ");
-            });
-
-            $('#btnNuevo').click(function () {
-                if ($("#idUbigeo").val() == '' || $("#idUbigeo").val() == null) {
-                    Swal.fire('Debe seleccionar un distrito.');
-                    return;
-                }
-                var url = $(this).data('url');
-                $('#modal-container-requer').modal('show');
-                $('#Contenido').html("");
-                $.get(url, { id: 0 }, function (data) {
-                    $('#Contenido').html(data);
-                });
-            });
 
             $('#btnAddMemberModal').click(function () {
                 var url = $(this).data('url');
@@ -237,9 +406,7 @@
                 changeTags(true);
             });
 
-            $('#btnBuscar').click(function () {
-                loadDtComiteAdmin();
-            });
+         
 
             $('#btnExportarComite').click(function () {
                 var datos = {
@@ -314,101 +481,9 @@
 
         });
 
-        function loadDtComiteAdmin() {
-            var datos = {
-                idDptoSelect: $("#idDptoSelect").val(),
-                idProvSelect: $("#idProvSelect").val(),
-                idUbigeo: $("#idUbigeo").val(),
-            };
+        
 
-            if (datos.idDptoSelect === '') {
-                Swal.fire(
-                    {
-                        title: "Aviso",
-                        text: "Debe seleccionar al menos un filtro de busqueda.",
-                        icon: "warning",
-                    });
-                return;
-            }
-
-            listDataTable.destroy();
-            listDataTable = $('#dt-basic-example').DataTable({
-                language: {
-                    processing: "Procesando...",
-                    // search: "Busqueda&nbsp;:",
-                    searchPlaceholder: 'Buscar por nro resolucion',
-                    lengthMenu: "_MENU_ reg. por pag",
-                    info: "Pag. _PAGE_ de _PAGES_ - Total _TOTAL_ registros",
-                    infoEmpty: "No hay registros empty",
-                    infoFiltered: "(filtrados de _MAX_ total de reg.)",
-                    infoPostFix: "",
-                    loadingRecords: "Cargando los registros...",
-                    zeroRecords: "No hay registros",
-                    emptyTable: "No hay datos",
-                    paginate: {
-                        first: "Primero",
-                        previous: "Previo",
-                        next: "Siguiente",
-                        last: "Ultimo"
-                    },
-                    aria: {
-                        sortAscending: ": activer pour trier la colonne par ordre croissant",
-                        sortDescending: ": activer pour trier la colonne par ordre décroissant"
-                    },
-                    decimal: "."
-                },
-                "processing": true, // for show progress bar
-                "serverSide": true, // for process server side
-                "filter": true, // this is for disable filter (search box)
-                "orderMulti": false, // for disable multiple column at once
-                "pageLength": 10,
-
-                "ajax": {
-                    "url": "@Url.Action("IndexData", "ComiteAdmin")",
-                    "type": "POST",
-                    "data": datos,
-                    "datatype": "json"
-                },
-
-                "columns": [
-                    { "data": "iIdComite", "autoWidth": true },
-                    { "data": "ubigeoFull", "autoWidth": true },
-                    { "data": "iTipResolucionNavigation.descripcion", "autoWidth": true },
-                    { "data": "vNumResolucion", "autoWidth": true, render: formatterDownLoadFile },
-                    { "data": "dFecEmision", "autoWidth": true },
-                    { "data": "dFecInicio", "autoWidth": true },
-                    { "data": "dFecFin", "autoWidth": true },
-                    {
-                        "data": "bVigente", "autoWidth": true, "render": function (data, type, row) {
-                            if (row.bVigente) {
-                                return '<strong class="text-info">SI</strong>';
-                            } else {
-                                return '<strong class="title">NO</strong>';
-                            }
-                        }
-                    },
-                    { "data": "iNumMiembro", "autoWidth": true },
-                    { "data": "iIdComite", "render": formatterAcciones }
-                ],
-
-                "columnDefs": [
-                    { className: "text-center", "targets": [0, 3, 4, 5, 6, 7] },
-                    { className: "text-center", "targets": [9] },
-                    {
-                        targets: [4, 5, 6],
-                        render: fnRenderDate
-                    }
-                ],
-                searchDelay: 350
-            });
-        }
-
-        const formatterAcciones = (data, type, row, index) => {
-            var edit = '<button type="button" title="Editar" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" onclick="editAdmin(' + row.iIdComite + ');" ><i class="fal fa-pencil"></i></button>';
-            var member = edit + '<button type="button" title="Agregar Miembro" class="btn btn-sm btn-icon btn-success rounded-circle mr-1" onclick="getMember(' + row.iIdComite + ',' + index.row + ');"><i class="fal fa-user"></i></button>';
-            var remove = member + '<button type="button" title="Eliminar" class="btn btn-sm btn-icon btn-outline-danger rounded-circle mr-1"><i class="fal fa-times"></i></button>';
-            return remove;
-        }
+        
 
         function formatterDownLoadFile(data, type, row, index) {
             var link = '@Url.Action("downloadResolucionAsync", "ComiteAdmin", new { id = "-1" })';
@@ -490,27 +565,7 @@
             return remove;
         }
 
-        const loadUbigeo = (dpto, prov, value) => {
-            $.get("@Url.Action("getDistritoByDptoProv", "Maestro")" + "/" + dpto + "/" + prov, function (data) {
-                $("#idUbigeo").empty();
-                $.each(data, function (index, row) {
-                    $("#idUbigeo").append($("<option />").val(this.codigo).text(this.descripcion));
-                });
-                if (value != "") $("#idUbigeo").val(value);
-                $('#idUbigeo').select2({ allowClear: true, placeholder: "---SELECCIONE DISTRITO---" });
-            })
-        };
 
-        const loadProvincia = (id, value) => {
-            $.get("@Url.Action("getProvinciaByDpto", "Maestro")" + "/" + id, function (data) {
-                $("#idProvSelect").empty();
-                $.each(data, function (index, row) {
-                    $("#idProvSelect").append($("<option />").val(this.id).text(this.Descripcion));
-                });
-                if (value != "") $("#idProvSelect").val(value);
-                $('#idProvSelect').select2({ allowClear: true, placeholder: "---SELECCIONE PROVINCIA---" });
-            })
-        };
 
         const changeTags = (esChange) => {
             var seccionTitle = '';
@@ -526,9 +581,6 @@
             $('#divTitleSeccion').html(seccionTitle);
         }
 
-        $(function () {
-            loadDtComiteAdmin();
-        })
 
     </script>
 } *@

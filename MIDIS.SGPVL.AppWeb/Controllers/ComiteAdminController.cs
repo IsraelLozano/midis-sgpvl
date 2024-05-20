@@ -115,8 +115,6 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
                 return NotFound(ex.Message);
                 throw ex;
             }
-
-
         }
 
         #region Miembros

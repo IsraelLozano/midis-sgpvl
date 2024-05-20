@@ -13,5 +13,6 @@ namespace MIDIS.SGPVL.Manager.Maestro
         Task<List<GetDistritoDto>> getDistritoFull(List<string> ubigeo);
         Task<List<GetCentroPobladoDto>> getCentroPobladoByDistrito(string codDistrito);
         Task<List<GetCentroPobladoDto>> getCentroPobladoFull(List<string> codCentPoblados);
+        Task<List<GetDptoDto>> GetAllDptoAsync();
     }
 }

@@ -2,14 +2,20 @@
 
 namespace MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd
 {
-    public class CmdMiembroJdDto
+    public class CmdBeneficiarioDto
     {
-        public int iIdMiembro { get; set; }
+        public int iIdUsuario { get; set; }
         public int iCodPersona { get; set; }
-        public int iIdJunta { get; set; }
-        [Display(Name = "Tipo Cargo")]
-        [Required(ErrorMessage = "El Campo cargo es obligatorio")]
-        public int iTipCargo { get; set; }
+        public int iCodComVasLeche { get; set; }
+        public int? iIdSocio { get; set; }
+        public int? iClasificacion { get; set; }
+        public string vClaSocEconomica { get; set; }
+        public bool? bGestante { get; set; }
+        public bool? bDiscapacitado { get; set; }
+        public bool? bPacTBC { get; set; }
+        public bool? iNumSemGestacion { get; set; }
+        public DateTime? dFecParto { get; set; }
+        public DateTime? dFecTermLactancia { get; set; }
         public bool? bActivo { get; set; }
 
         #region Datos-Persona
@@ -42,12 +48,6 @@ namespace MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd
         [Display(Name = "Direccion")]
         [Required(ErrorMessage = "El Campo Direccion es obligatorio")]
         public string vDireccion { get; set; }
-
-
-        //Adicionales
-        public string? tipoResolucionTexto { get; set; }
-        public string? UbigeoCompletoFull { get; set; }
-
         #endregion
     }
 }

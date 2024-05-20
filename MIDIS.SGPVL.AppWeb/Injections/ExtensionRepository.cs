@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MIDIS.SGPVL.Contexto.Data;
 using MIDIS.SGPVL.Manager.ComiteAdmin;
+using MIDIS.SGPVL.Manager.ComitePvl;
 using MIDIS.SGPVL.Manager.Maestro;
 using MIDIS.SGPVL.Manager.Settings;
 using MIDIS.SGPVL.Repository.Comite;
@@ -32,14 +33,14 @@ namespace MIDIS.SGPVL.AppWeb.Injections
             services.AddScoped<ISocioReposiroty, SocioReposiroty>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
-            services.AddScoped<ICentroPobladoRepository,CentroPobladoRepository >();
-            services.AddScoped<IDepartamentoRepository,DepartamentoRepository >();
-            services.AddScoped<IEnumeradoItemRepository,EnumeradoItemRepository >();
-            services.AddScoped<IEnumeradoRepository,EnumeradoRepository >();
-            services.AddScoped<IProvinciaRepository,ProvinciaRepository >();
+            services.AddScoped<ICentroPobladoRepository, CentroPobladoRepository>();
+            services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
+            services.AddScoped<IEnumeradoItemRepository, EnumeradoItemRepository>();
+            services.AddScoped<IEnumeradoRepository, EnumeradoRepository>();
+            services.AddScoped<IProvinciaRepository, ProvinciaRepository>();
             services.AddScoped<IUbigeoRepository, UbigeoRepository>();
 
-            services.AddScoped<IPersonaNaturalRepository,PersonaNaturalRepository >();
+            services.AddScoped<IPersonaNaturalRepository, PersonaNaturalRepository>();
             services.AddScoped<IPersonaRepository, PersonaRepository>();
             services.AddScoped<IDistritoRepository, DistritoRepository>();
 
@@ -57,7 +58,7 @@ namespace MIDIS.SGPVL.AppWeb.Injections
             return services;
         }
 
-      
+
 
         public static IServiceCollection AddRepositoriesSp(this IServiceCollection services, Action<RepositoriesOptions> configureOptions)
         {
@@ -84,8 +85,10 @@ namespace MIDIS.SGPVL.AppWeb.Injections
             services.AddScoped<IAplicationConstants, AplicationConstants>();
             services.AddScoped<IComiteAdminManager, ComiteAdminManager>();
             services.AddScoped<IMaestroManager, MaestroManager>();
-            //services.AddScoped<IReporteManager, ReporteManager>();
-            //services.AddScoped<IPedidoManager, PedidoManager>();
+            services.AddScoped<IComitePvlManager, ComitePvlManager>();
+            services.AddScoped<IJuntaDirectivaManager, JuntaDirectivaManager>();
+            services.AddScoped<ISocioManager, SocioManager>();
+            services.AddScoped<IBeneficiarioManager, BeneficiarioManager>();
 
             return services;
 

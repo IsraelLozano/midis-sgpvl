@@ -8,11 +8,26 @@ namespace MIDIS.SGPVL.Repository.UnitOfWork
     {
         private bool disposedValue;
         private readonly BDPVLContext _context;
-        public IComitePVLRepository  _comitePVLRepository { get; }
-        public IJunDirectivaRepository  _junDirectivaRepository{ get; }
-        public IMiembroJuntaRepository _miembroJuntaRepository{ get; }
-        public ISocioReposiroty _socioReposiroty{ get; }
+        public IComitePVLRepository _comitePVLRepository { get; }
+        public IJunDirectivaRepository _junDirectivaRepository { get; }
+        public IMiembroJuntaRepository _miembroJuntaRepository { get; }
+        public ISocioReposiroty _socioReposiroty { get; }
         public IUsuarioRepository _usuarioRepository { get; }
+
+        public ComiteUnitOfWork(BDPVLContext context,
+            IComitePVLRepository comitePVLRepository,
+            IJunDirectivaRepository junDirectivaRepository,
+            IMiembroJuntaRepository miembroJuntaRepository,
+            ISocioReposiroty socioReposiroty,
+            IUsuarioRepository usuarioRepository)
+        {
+            _context = context;
+            _comitePVLRepository = comitePVLRepository;
+            _junDirectivaRepository = junDirectivaRepository;
+            _miembroJuntaRepository = miembroJuntaRepository;
+            _socioReposiroty = socioReposiroty;
+            _usuarioRepository = usuarioRepository;
+        }
 
         public void Save()
         {

@@ -27,8 +27,11 @@ bld/
 [Ll]og/
 
 ##AppSettings
-appsettings.json
-appsettings.Development.json
+##appsettings.json
+##appsettings.Development.json
+
+##Resources
+Resources/
 
 
 # Visual Studio 2015 cache/options directory

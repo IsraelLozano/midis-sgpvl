@@ -16,8 +16,4 @@
     <ProjectReference Include="..\MIDIS.SGPVL.Repository\MIDIS.SGPVL.Repository.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ComitePvl\" />
-  </ItemGroup>
-
 </Project>

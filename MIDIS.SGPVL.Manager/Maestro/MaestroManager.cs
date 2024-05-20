@@ -3,6 +3,8 @@ using MIDIS.SGPVL.Entity.Models.Maestro;
 using MIDIS.SGPVL.ManagerDto.Maestro.Get;
 using MIDIS.SGPVL.Repository.UnitOfWork;
 using MIDIS.SGPVL.Utils.Enumerados;
+using System;
+using System.Threading.Tasks;
 
 namespace MIDIS.SGPVL.Manager.Maestro
 {
@@ -18,6 +20,19 @@ namespace MIDIS.SGPVL.Manager.Maestro
         }
 
         #region Ubigeos
+
+        public async Task<List<GetDptoDto>> GetAllDptoAsync()
+        {
+            try
+            {
+                var querys = _unitOfWork._departamentoRepository.GetAll(orderBy: l => l.OrderBy(s => s.vDescripcion));
+                return _mapper.Map<List<GetDptoDto>>(querys);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         public async Task<List<GetUbigeoDto>> getUbigeosByProvincia(string codProv)
         {
@@ -97,8 +112,7 @@ namespace MIDIS.SGPVL.Manager.Maestro
                 throw ex;
             }
         }
-        
-        
+
         public async Task<List<GetCentroPobladoDto>> getCentroPobladoFull(List<string> codCentPoblados)
         {
             try
@@ -127,7 +141,6 @@ namespace MIDIS.SGPVL.Manager.Maestro
                 throw ex;
             }
         }
-
         public async Task<Dictionary<EnumeradoCabecera, List<GetEnumeradoComboDto>>> GetListEnumeradoByGrupo(List<EnumeradoCabecera> listaMaestra)
         {
             try

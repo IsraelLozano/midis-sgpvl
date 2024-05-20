@@ -1,47 +1,32 @@
 ﻿using AutoMapper;
-using MIDIS.SGPVL.AppWeb.Models;
-using MIDIS.SGPVL.Entity.Models.Comite;
 using MIDIS.SGPVL.Entity.Models.ComitePvl;
 using MIDIS.SGPVL.Manager.Maestro;
 using MIDIS.SGPVL.Manager.Settings;
-using MIDIS.SGPVL.ManagerDto.ComiteAdmin.Cmd;
-using MIDIS.SGPVL.ManagerDto.ComiteAdmin.Get;
 using MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd;
 using MIDIS.SGPVL.ManagerDto.ComitePvl.Get;
 using MIDIS.SGPVL.ManagerDto.Maestro.Get;
 using MIDIS.SGPVL.Repository.UnitOfWork;
-using MIDIS.SGPVL.Utils.Dtos;
-using MIDIS.SGPVL.Utils.Helpers.FileManager;
 
 namespace MIDIS.SGPVL.Manager.ComitePvl
 {
-    public class ComitePvlManager
+    public class ComitePvlManager : IComitePvlManager
     {
         private readonly IMapper _mapper;
         private readonly MaestroUnitOfWork _maestraUnitOfWork;
         private readonly IMaestroManager _maestraManager;
-        private readonly PersonaUnitOfWork _personaUnitOfWork;
-        private readonly ResourceDto _resourceDto;
         private readonly IAplicationConstants _aplicationConstants;
-        private readonly IStorageManager _storageManager;
         private readonly ComiteUnitOfWork _comiteUnitOfWork;
 
         public ComitePvlManager(IMapper mapper,
             MaestroUnitOfWork maestraUnitOfWork,
             IMaestroManager maestraManager,
-            PersonaUnitOfWork personaUnitOfWork,
-            ResourceDto resourceDto,
             IAplicationConstants aplicationConstants,
-            IStorageManager storageManager,
             ComiteUnitOfWork comiteUnitOfWork)
         {
             _mapper = mapper;
             _maestraUnitOfWork = maestraUnitOfWork;
             _maestraManager = maestraManager;
-            _personaUnitOfWork = personaUnitOfWork;
-            _resourceDto = resourceDto;
             _aplicationConstants = aplicationConstants;
-            _storageManager = storageManager;
             _comiteUnitOfWork = comiteUnitOfWork;
         }
 
@@ -98,14 +83,14 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
             return response;
         }
 
-        public async Task<CmdComiteAdminDto> GetComiteByIdAsync(int id)
+        public async Task<CmdComiteDto> GetComiteByIdAsync(int id)
         {
             var query = _comiteUnitOfWork._comitePVLRepository.GetAll(l => l.iCodComVasLeche == id);
             var ubigeos = query.Select(s => s.vUbigeo).Distinct().ToList();
             var listUbigeos = await _maestraManager.getDistritoFull(ubigeos);
-            var response = _mapper.Map<CmdComiteAdminDto>(query.FirstOrDefault());
-            response.ubigeoFull = listUbigeos.FirstOrDefault().full();
-            response.tipoResolucionText = listUbigeos.FirstOrDefault().full();
+            var response = _mapper.Map<CmdComiteDto>(query.FirstOrDefault());
+            //response.ubigeoFull = listUbigeos.FirstOrDefault().full();
+            //response.tipoResolucionText = listUbigeos.FirstOrDefault().full();
             return response;
 
         }
@@ -138,7 +123,7 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
 
         }
 
-        
+
 
     }
 }
