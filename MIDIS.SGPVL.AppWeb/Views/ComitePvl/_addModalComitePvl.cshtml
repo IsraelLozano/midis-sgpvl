@@ -9,15 +9,125 @@
             <span aria-hidden="true"><i class="fal fa-times"></i></span>
         </button>
     </div>
-    <form id="myForm">
-        <div class="modal-body">
+    <div class="modal-body">
+        <form id="myForm" method="post">
+            <input type="hidden" asp-for="iCodComVasLeche" />
+            <div class="panel-content">
+                <div class="form-row form-group">
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="iTipOsb" class="form-label"></label><span class="text-danger">*</span>
+                        <select asp-for="iTipOsb" asp-items="@ViewBag.tipoOsb"><option value=""></option></select>
+                        <span asp-validation-for="iTipOsb" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="iTipAlimento" class="form-label"></label><span class="text-danger">*</span>
+                        <select asp-for="iTipAlimento" asp-items="@ViewBag.tipoAlimento"><option value=""></option></select>
+                        <span asp-validation-for="iTipAlimento" class="text-danger"></span>
+                    </div>
 
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            <button type="submit" class="btn btn-primary" id="btnGrabar">Grabar</button>
+                    <div class="col-md-12 mb-2">
+                        <label asp-for="vNomComite" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vNomComite" class="form-control">
+                        <span asp-validation-for="vNomComite" class="text-danger"></span>
+                    </div>
 
-   
-        </div>
-    </form>
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="vDireccion" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vDireccion" class="form-control">
+                        <span asp-validation-for="vDireccion" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="vReferencia" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vReferencia" class="form-control">
+                        <span asp-validation-for="vReferencia" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vLatitud" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vLatitud" class="form-control">
+                        <span asp-validation-for="vLatitud" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vLongitud" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vLongitud" class="form-control">
+                        <span asp-validation-for="vLongitud" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2" style="padding-top: 10px;">
+                        <button type="button" class="btn btn-outline-success btn-lg btn-icon rounded-circle" id="btnGrabar"><i class="fal fa-map mr-1 fs-xl fw-500"></i></button>
+                        @* <i class="fa-solid fa-map-location-dot"></i> *@
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-window-close mr-1 fs-lg"></i>Cerrar</button>
+        <button type="submit" class="btn btn-primary" id="btnGrabarPvl"><i class="fas fa-save mr-1 fs-lg"></i>Grabar</button>
+    </div>
 </div>
+
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#iTipOsb').select2({ allowClear: true, placeholder: "---SELECCIONE OBS---" });
+        $('#iTipAlimento').select2({ allowClear: true, placeholder: "---SELECCIONE TIPO ALIMENTO---" });
+
+        $("#btnGrabarPvl").click(function (e) {
+            e.preventDefault();
+            Swal.fire(
+                {
+                    title: "Confirmacion",
+                    text: "Desea grabar los cambios?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Grabar",
+                    target: document.getElementById('modal-container-requer'),
+                }).then(function (result) {
+                    var $form = $('#myForm');
+                    if (result.value) {
+                        if ($form.valid()) {
+                            var formData = new FormData();
+
+                            var data = $('#myForm').serializeArray().reduce(function (obj, item) {
+                                formData.append(item.name, item.value);
+                            }, {});
+
+                            var datos = {
+                                vUbigeo: $("#idUbigeo").val(),
+                                vCodCentPoblado: $("#idCentroPoblado").val(),
+                            };
+
+                            formData.append("vUbigeo", datos.vUbigeo);
+                            formData.append("vCodCentPoblado", datos.vCodCentPoblado);
+
+                            $.ajax({
+                                url: "@Url.Action("SaveAdmin", "ComitePvl")",
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                type: "POST"  // Verbo HTTP
+                            }).done(function (result) {
+                                if (result) {
+                                    $('#modal-container-requer').modal('hide');
+                                    loadData();
+                                }
+                            }).fail(function (xhr, status, error) {
+                                console.error(xhr, status, error)
+                            }).always(function () {
+
+                            });
+                        }
+                    }
+                });
+        });
+
+    })
+
+</script>

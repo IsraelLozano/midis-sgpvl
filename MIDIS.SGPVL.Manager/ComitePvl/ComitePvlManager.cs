@@ -51,8 +51,8 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
                 query = _comiteUnitOfWork
                 ._comitePVLRepository
                 .GetAll(l =>
-                l.vCodCentPoblado == param.idCentroPoblado
-                && (filtro.Contains(l.vNomComite + l.vCodComite) || filtro == ""),
+                l.vCodCentPoblado == param.idCentroPoblado,
+                //&& (filtro.Contains(l.vNomComite + l.vCodComite) || filtro == ""),
                 includeProperties: "iTipAlimentoNavigation,iTipOsbNavigation,VLJunDirectivas.iTipResolucionNavigation,VLJunDirectivas.VLMiembroJunta.iCodPersonaNavigation,VLJunDirectivas.VLMiembroJunta.iTipCargoNavigation");
             }
             else
@@ -60,8 +60,8 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
                 query = _comiteUnitOfWork
                 ._comitePVLRepository
                 .GetAll(l =>
-                l.vCodCentPoblado.StartsWith(ubigeo)
-                && (filtro.Contains(l.vNomComite + l.vCodComite) || filtro == ""),
+                l.vCodCentPoblado.StartsWith(ubigeo),
+                //&& (filtro.Contains(l.vNomComite + l.vCodComite) || filtro == ""),
                 includeProperties: "iTipAlimentoNavigation,iTipOsbNavigation,VLJunDirectivas.iTipResolucionNavigation,VLJunDirectivas.VLMiembroJunta.iCodPersonaNavigation,VLJunDirectivas.VLMiembroJunta.iTipCargoNavigation");
             }
 
@@ -105,6 +105,7 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
                     entidad.dFecRegistro = entidad.dFecModifica = DateTime.Now;
                     entidad.vUsuRegistro = entidad.vUsuModifica = _aplicationConstants.UsuarioSesionBE.Credenciales;
                     entidad.bActivo = true;
+                    entidad.vCodComite = entidad.vCodCentPoblado;
 
                     _comiteUnitOfWork._comitePVLRepository.Insert(entidad);
                 }

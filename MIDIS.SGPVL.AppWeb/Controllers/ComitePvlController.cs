@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using MIDIS.SGPVL.Manager.ComitePvl;
 using MIDIS.SGPVL.Manager.Maestro;
 using MIDIS.SGPVL.Manager.Settings;
-using MIDIS.SGPVL.ManagerDto.ComiteAdmin.Cmd;
 using MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd;
 using MIDIS.SGPVL.ManagerDto.ComitePvl.Get;
 using MIDIS.SGPVL.ManagerDto.Maestro.Get;
 using MIDIS.SGPVL.Utils.Dtos;
 using MIDIS.SGPVL.Utils.Enumerados;
 using MIDIS.SGPVL.Utils.Helpers.FileManager;
+using System;
+using System.Threading.Tasks;
 
 namespace MIDIS.SGPVL.AppWeb.Controllers
 {
@@ -21,13 +22,15 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
         private readonly IComitePvlManager _comitePvlManager;
         private readonly IStorageManager _storageManager;
         private readonly ResourceDto _resourceDto;
+        private readonly IJuntaDirectivaManager _juntaDirectivaManager;
 
         public ComitePvlController(ILogger<ComiteAdminController> logger,
             IMaestroManager maestrasManager,
             IAplicationConstants aplicationConstants,
             IStorageManager storageManager,
             ResourceDto resourceDto,
-            IComitePvlManager comitePvlManager)
+            IComitePvlManager comitePvlManager,
+            IJuntaDirectivaManager juntaDirectivaManager)
         {
             _logger = logger;
             _maestrasManager = maestrasManager;
@@ -35,6 +38,7 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
             _storageManager = storageManager;
             _resourceDto = resourceDto;
             _comitePvlManager = comitePvlManager;
+            _juntaDirectivaManager = juntaDirectivaManager;
         }
 
         public async Task<IActionResult> Index()
@@ -71,13 +75,47 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
             listaMaestra.Add(EnumeradoCabecera.TIPO_ALIMENTO);
 
             var combos = await _maestrasManager.GetListEnumeradoByGrupo(listaMaestra);
-            var tipoOsb = combos[EnumeradoCabecera.TIPO_OSB].ToList();
-            var tipoAlimento = combos[EnumeradoCabecera.TIPO_ALIMENTO].ToList();
-            ViewBag.tipoOsb = new SelectList(tipoOsb, nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.iTipOsb);
-            ViewBag.tipoOsb = new SelectList(tipoAlimento, nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.iTipAlimento);
+            var _tipoOsb = combos[EnumeradoCabecera.TIPO_OSB].ToList();
+            var _tipoAlimento = combos[EnumeradoCabecera.TIPO_ALIMENTO].ToList();
+            ViewBag.tipoOsb = new SelectList(_tipoOsb, nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.iTipOsb);
+            ViewBag.tipoAlimento = new SelectList(_tipoAlimento, nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.iTipAlimento);
 
             return PartialView("_addModalComitePvl", vm);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveAdmin(CmdComiteDto data)
+        {
+            if (ModelState.IsValid)
+            {
+                var resp = await _comitePvlManager.AddComitePvl(data);
+                return Ok(resp.iCodComVasLeche > 0);
+            }
+
+            List<EnumeradoCabecera> listaMaestra = new List<EnumeradoCabecera>();
+            listaMaestra.Add(EnumeradoCabecera.TIPO_OSB);
+            listaMaestra.Add(EnumeradoCabecera.TIPO_ALIMENTO);
+
+            var combos = await _maestrasManager.GetListEnumeradoByGrupo(listaMaestra);
+            var _tipoOsb = combos[EnumeradoCabecera.TIPO_OSB].ToList();
+            var _tipoAlimento = combos[EnumeradoCabecera.TIPO_ALIMENTO].ToList();
+            ViewBag.tipoOsb = new SelectList(_tipoOsb, nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), data.iTipOsb);
+            ViewBag.tipoAlimento = new SelectList(_tipoAlimento, nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), data.iTipAlimento);
+
+            return PartialView("_addModalComitePvl", data);
+        }
+
+
+        #region Junta Directiva
+
+        public async Task<IActionResult> GetLisJuntaDirectivaByIdPvlAsync([FromQuery] int idPvl)
+        {
+            var query = await _juntaDirectivaManager.GetJuntaDirectivaByComiteAsync(idPvl);
+
+
+            return Ok(query);
+        }
+        #endregion
 
     }
 }

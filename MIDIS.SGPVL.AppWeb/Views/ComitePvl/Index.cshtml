@@ -2,20 +2,16 @@
 
 @model GetComiteParams;
 
-
 @{
     ViewData["Title"] = "Comite PVL";
-    ViewData["TitleOption"] = "Principal";
+    ViewData["TitleOption"] = "Comite de Vaso de Leche";
     ViewData["PageName"] = "comite-pvl";
 }
 
 @section breadcrumb {
-
     <li class="breadcrumb-item">Comite PVL</li>
     <li class="position-absolute pos-top pos-right d-none d-sm-block"><span class="js-get-date"></span></li>
 }
-
-
 
 @section HeadBlock {
     <link rel="stylesheet" media="screen, print" href="~/asset/css/fa-brands.css">
@@ -36,6 +32,8 @@
     </div>
 </div>
 <!--Seccion modal-->
+
+
 <div class="row">
     <div class="col-xl-12">
         <div id="panel-1" class="panel">
@@ -110,11 +108,11 @@
                                 <table id="dtComitePvl" class="table table-bordered table-hover table-striped table-sm w-100 display compact">
                                     <thead>
                                         <tr>
-                                            <th>Id</th>
                                             <th>Codigo</th>
                                             <th>Dpto/Provincia/Distrito</th>
                                             <th>C. Poblado</th>
                                             <th>OSB</th>
+                                            <th>Comite</th>
                                             <th>Estado Comite</th>
                                             <th>Presidente (a) o Coordinador (a)</th>
                                             <th>Nro Socio</th>
@@ -128,58 +126,54 @@
                     </div>
                     <!--END: PANEL ADMINSTRACION-->
                     <!--BEGIN: PANEL MEMBERS-->
-                    @* <div id="divMember">
-                    <div class="mb-g">
-                    <div class="row">
-                    <div class="col-sm-6 col-xl-4">
-                    <div class="form-group">
-                    <h5 id="divUbigeoFull"></h5>
-                    </div>
-                    </div>
+                    <div id="divMember">
+                        <div class="mb-g">
+                            <div class="row">
+                                <div class="col-sm-6 col-xl-4">
+                                    <div class="form-group">
+                                        <h5 id="divUbigeoFull"></h5>
+                                    </div>
+                                </div>
 
-                    <div class="col-sm-6 col-xl-6">
-                    <div class="form-group">
-                    <h5 id="dicNroResol"></h5>
-                    </div>
-                    </div>
-                    </div>
-                    <div class="row mt-1">
+                                <div class="col-sm-6 col-xl-6">
+                                    <div class="form-group">
+                                        <h5 id="dicNroResol"></h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-1">
 
-                    <div class="text-center col-sm-12 col-xl-12">
-                    <button type="button" class="btn btn-success" data-url='@Url.Action("addMemberModal")' id="btnAddMemberModal" style="margin: 5px 0px 5px 5px; min-width: 100px;">
-                    <i class="fas fa-plus-circle mr-1"></i> Agregar
-                    </button>
-                    <button type="button" class="btn btn-info" id="btnReturn" style="margin: 5px 0px 5px 5px; min-width: 100px;">
-                    <i class="fas fa-arrow-circle-left mr-1"></i>Regresar
-                    </button>
+                                <div class="text-center col-sm-12 col-xl-12">
+                                    <button type="button" class="btn btn-success" data-url='@Url.Action("addMemberModal")' id="btnAddMemberModal" style="margin: 5px 0px 5px 5px; min-width: 100px;">
+                                        <i class="fas fa-plus-circle mr-1"></i> Agregar
+                                    </button>
+                                    <button type="button" class="btn btn-info" id="btnReturn" style="margin: 5px 0px 5px 5px; min-width: 100px;">
+                                        <i class="fas fa-arrow-circle-left mr-1"></i>Regresar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-g">
+                            <div class="table-responsive m-t-40">
+                                <table id="dtJuntaDirectiva" class="table table-bordered table-hover table-striped table-sm w-100 display compact">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Tipo Resolucion</th>
+                                            <th>Nro Resolucion</th>
+                                            <th>Fecha Emision</th>
+                                            <th>Fecha Inicio</th>
+                                            <th>Fecha Fin</th>
+                                            <th>Vigente</th>
+                                            <th>Nro Miembros</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    </div>
-                    </div>
-                    <div class="mb-g">
-                    <div class="table-responsive m-t-40">
-                    <table id="tblMembers" class="table table-bordered table-hover table-striped table-sm w-100 display compact">
-                    <thead>
-                    <tr>
-                    <th>Id</th>
-                    <th>Codigo</th>
-                    <th>Ubiego</th>
-                    <th>Nro Doc.</th>
-                    <th>Nombre Completo</th>
-                    <th>Celular</th>
-                    <th>Designacion Resolucion</th>
-                    <th>Telef. Fijo</th>
-                    <th>Correo</th>
-                    <th>Acciones</th>
-                    </tr>
-                    </thead>
-                    </table>
-                    </div>
-                    </div>
-                    </div> *@
                     <!--END: PANEL MEMBERS-->
-
-                    <span style="text-align:center"></span>
-
                 </div>
             </div>
         </div>
@@ -197,7 +191,11 @@
 
     <script>
         var listDataTable = $('#dtComitePvl').DataTable({ language: { emptyTable: 'No hay registros.' } });
+        var dtJuntaDirectiva = $('#dtJuntaDirectiva').DataTable({ language: { emptyTable: 'No hay registros.' } });
+
         $(document).ready(function () {
+            changeTags(true);
+
             $('#idDptoSelect').select2({ allowClear: true, placeholder: "---SELECCIONE DPTO---" });
             $('#idProvSelect').select2({ allowClear: true, placeholder: "---SELECCIONE PROVINCIA---" });
             $('#idUbigeo').select2({ allowClear: true, placeholder: "---SELECCIONE DISTRITO---" });
@@ -211,6 +209,7 @@
             $('#idDptoSelect').change(function () {
                 loadProvincia($(this).val(), " ");
             });
+
             $('#idUbigeo').change(function () {
                 loadCentroPoblado($(this).val(), " ");
             });
@@ -224,7 +223,7 @@
                     Swal.fire('Debe seleccionar un distrito.');
                     return;
                 }
-                
+
                 if ($("#idCentroPoblado").val() == '' || $("#idCentroPoblado").val() == null) {
                     Swal.fire('Debe seleccionar un centro poblado.');
                     return;
@@ -236,6 +235,18 @@
                     $('#Contenido').html(data);
                 });
             });
+
+            $('#btnAddMemberModal').click(function () {
+                var url = $(this).data('url');
+                $('#modal-members').modal('show');
+                $.get(url, { idComite: idComite }, function (data) {
+                    $('#contenidoMembers').html(data);
+                });
+            });
+
+            $('#btnReturn').click(function () {
+                changeTags(true);
+            });
         });
 
         function loadDtComiteAdmin() {
@@ -243,6 +254,7 @@
                 idDptoSelect: $("#idDptoSelect").val(),
                 idProvSelect: $("#idProvSelect").val(),
                 idUbigeo: $("#idUbigeo").val(),
+                idCentroPoblado: $("#idCentroPoblado").val(),
             };
 
             if (datos.idDptoSelect === '') {
@@ -302,16 +314,16 @@
                     { "data": "vNomComite", "autoWidth": true },
                     {
                         "data": "bActivo", "autoWidth": true, "render": function (data, type, row) {
-                            if (row.bVigente) {
-                                return '<strong class="text-info">SI</strong>';
+                            if (row.bActivo) {
+                                return '<strong class="text-info fw-700">Activo</strong>';
                             } else {
-                                return '<strong class="title">NO</strong>';
+                                return '<strong class="text-danger">Inactivo</strong>';
                             }
                         }
                     },
+                    { "data": "iCodComVasLeche", "autoWidth": true },
                     { "data": "iNumSocio", "autoWidth": true },
                     { "data": "iNumUsuario", "autoWidth": true },
-                    { "data": "iCodComVasLeche", "autoWidth": true},
                     { "data": "iCodComVasLeche", "render": formatterAcciones }
                 ],
 
@@ -329,11 +341,168 @@
 
         const formatterAcciones = (data, type, row, index) => {
             var edit = '<button type="button" title="Editar" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" onclick="editAdmin(' + row.iCodComVasLeche + ');" ><i class="fal fa-pencil"></i></button>';
-            var member = edit + '<button type="button" title="Agregar Miembro" class="btn btn-sm btn-icon btn-success rounded-circle mr-1" onclick="getMember(' + row.iCodComVasLeche + ',' + index.row + ');"><i class="fal fa-user"></i></button>';
+
+            var htmlMember = `<div class="btn-group">
+                                        <button type="button" title="Agregar Miembro" class="btn btn-sm btn-icon btn-success rounded-circle mr-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fal fa-user"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="getPageJuntaDirectiva(`+ row.iCodComVasLeche + `,` + index.row + `)">Ver Junta Directiva</a>
+                                            <a class="dropdown-item" href="javascript:void(0)">Ver Socio</a>
+                                            <a class="dropdown-item" href="javascript:void(0)">Ver Beneficiario</a>
+                                        </div>
+                                     </div>`
+            var member = edit + htmlMember;
             var remove = member + '<button type="button" title="Eliminar" class="btn btn-sm btn-icon btn-outline-danger rounded-circle mr-1"><i class="fal fa-times"></i></button>';
             return remove;
         }
 
+        function loadData() {
+            listDataTable.ajax.reload();
+        }
+
+
+        /*
+        *   SCRIPT JUNTA DIRECTIVA
+        */
+
+        function loadDataMember(entidad) {
+            var datos = {
+                idDptoSelect: $("#idDptoSelect").val(),
+                idProvSelect: $("#idProvSelect").val(),
+                idUbigeo: $("#idUbigeo").val(),
+            };
+
+            if (datos.idDptoSelect === '') {
+                Swal.fire(
+                    {
+                        title: "Aviso",
+                        text: "Debe seleccionar al menos un filtro de busqueda.",
+                        icon: "warning",
+                    });
+                return;
+            }
+
+            dtJuntaDirectiva.destroy();
+            dtJuntaDirectiva = $('#dtJuntaDirectiva').DataTable({
+                language: {
+                    processing: "Procesando...",
+                    // search: "Busqueda&nbsp;:",
+                    searchPlaceholder: 'Buscar por nro resolucion',
+                    lengthMenu: "_MENU_ reg. por pag",
+                    info: "Pag. _PAGE_ de _PAGES_ - Total _TOTAL_ registros",
+                    infoEmpty: "No hay registros empty",
+                    infoFiltered: "(filtrados de _MAX_ total de reg.)",
+                    infoPostFix: "",
+                    loadingRecords: "Cargando los registros...",
+                    zeroRecords: "No hay registros",
+                    emptyTable: "No hay datos",
+                    paginate: {
+                        first: "Primero",
+                        previous: "Previo",
+                        next: "Siguiente",
+                        last: "Ultimo"
+                    },
+                    aria: {
+                        sortAscending: ": activer pour trier la colonne par ordre croissant",
+                        sortDescending: ": activer pour trier la colonne par ordre décroissant"
+                    },
+                    decimal: "."
+                },
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "pageLength": 10,
+
+                "ajax": {
+                    "url": "@Url.Action("IndexData", "ComiteAdmin")",
+                    "type": "POST",
+                    "data": datos,
+                    "datatype": "json"
+                },
+
+                "columns": [
+                    { "data": "iIdComite", "autoWidth": true },
+                    { "data": "ubigeoFull", "autoWidth": true },
+                    { "data": "iTipResolucionNavigation.descripcion", "autoWidth": true },
+                    { "data": "vNumResolucion", "autoWidth": true, render: formatterDownLoadFile },
+                    { "data": "dFecEmision", "autoWidth": true },
+                    { "data": "dFecInicio", "autoWidth": true },
+                    { "data": "dFecFin", "autoWidth": true },
+                    {
+                        "data": "bVigente", "autoWidth": true, "render": function (data, type, row) {
+                            if (row.bVigente) {
+                                return '<strong class="text-info">SI</strong>';
+                            } else {
+                                return '<strong class="title">NO</strong>';
+                            }
+                        }
+                    },
+                    { "data": "iNumMiembro", "autoWidth": true },
+                    { "data": "iIdComite", "render": formatterAcciones }
+                ],
+
+                "columnDefs": [
+                    { className: "text-center", "targets": [0, 3, 4, 5, 6, 7] },
+                    { className: "text-center", "targets": [9] },
+                    {
+                        targets: [4, 5, 6],
+                        render: fnRenderDate
+                    }
+                ],
+                searchDelay: 350
+            });
+        };
+
+        function getPageJuntaDirectiva(id, fila) {
+            changeTags(false);
+            console.info(id, fila);
+            // var dataSet = listDataTable.row(fila).data();
+            // var entidad = dataSet.VLAdmMiembros;
+            // idComite = id;
+            // if (entidad.length > 0) {
+            //     loadDataMember(entidad);
+            // } else {
+
+            //     dtMembers.context[0].oLanguage.sEmptyTable = "No existen registros";
+            //     dtMembers.clear().draw();
+            // }
+            // var textUbigeoFull = 'Ubigeo: <span class="fw-300"><i>' + dataSet.ubigeoFull + '</i></span>'
+            // var nroResolucion = 'Resolucion: <span class="fw-300"><i>' + dataSet.iTipResolucionNavigation.descripcion + '- ' + dataSet.vNumResolucion + '</i></span>'
+            // $("#divUbigeoFull").html(textUbigeoFull)
+            // $("#dicNroResol").html(nroResolucion)
+            // rowComiteCurrent = fila;
+        };
+
+        const editAdmin = (id) => {
+            var url = "@Url.Action("addComite", "ComiteAdmin")";
+            $('#modal-container-requer').modal('show');
+            $.get(url, { id: id }, function (data) {
+                $('#Contenido').html(data);
+            });
+        };
+
+        const changeTags = (esChange) => {
+            var seccionTitle = '';
+            if (esChange) {
+                seccionTitle = 'Listado de Comite <span class="fw-300"><i>Vaso de Leche</i></span>'
+                $('#divMember').hide()
+                $('#divTags').show();
+            } else {
+                seccionTitle = 'Listado Junta Directiva <span class="fw-300"><i>Vaso de Leche</i></span>'
+                $('#divTags').hide();
+                $('#divMember').show();
+            }
+            $('#divTitleSeccion').html(seccionTitle);
+        }
+
+        $(function () {
+            loadDtComiteAdmin();
+        })
+
+
+        //Ubigeos
         const loadUbigeo = (dpto, prov, value) => {
             $.get("@Url.Action("getDistritoByDptoProv", "Maestro")" + "/" + dpto + "/" + prov, function (data) {
                 $("#idUbigeo").empty();
@@ -367,10 +536,6 @@
             })
         };
 
-
-        $(function () {
-            loadDtComiteAdmin();
-        })
     </script>
 }
 @* @section Scripts {
@@ -392,21 +557,7 @@
         });
 
         $(document).ready(function () {
-            changeTags(true);
 
-            $('#btnAddMemberModal').click(function () {
-                var url = $(this).data('url');
-                $('#modal-members').modal('show');
-                $.get(url, { idComite: idComite }, function (data) {
-                    $('#contenidoMembers').html(data);
-                });
-            });
-
-            $('#btnReturn').click(function () {
-                changeTags(true);
-            });
-
-         
 
             $('#btnExportarComite').click(function () {
                 var datos = {
@@ -481,105 +632,11 @@
 
         });
 
-        
-
-        
-
-        function formatterDownLoadFile(data, type, row, index) {
-            var link = '@Url.Action("downloadResolucionAsync", "ComiteAdmin", new { id = "-1" })';
-            link = link.replace("-1", row.iIdComite);
-            var textHtml = '<a title="Editar" href="' + link + '">' + row.vNumResolucion + '</a>';
-            return textHtml;
-        }
-
-        const fnRenderDate = (data, type, row) => {
-            return moment(data).format('DD/MM/YYYY');
-        };
-
-        function loadData() {
-            listDataTable.ajax.reload();
-        }
-
-        function loadDataMember(entidad) {
-            var dataSet = listDataTable.rows().data();
-            const first = entidad.find(() => true)
-            var fila = dataSet.toArray().findIndex(l => l.iIdComite === first.iIdComite);
-            listDataTable.row(fila).data().VLAdmMiembros = entidad;
-
-            dtMembers.destroy();
-            dtMembers = $('#tblMembers').DataTable({
-                processing: true,
-                searching: false,
-                paging: false,
-                info: false,
-                data: entidad,
-                "columns": [
-                    { "autoWidth": true, "data": "iIdMiembro" },
-                    { "autoWidth": true, "data": "iTipCargoNavigation.descripcion" },
-                    { "autoWidth": true, "data": "iCodPersonaNavigation.iTipDocumentoNavigation.descripcion" },
-                    { "autoWidth": true, "data": "iCodPersonaNavigation.vNroDocumento" },
-                    { "autoWidth": true, "data": "iIdMiembro", render: formatterConcat },
-                    { "autoWidth": true, "data": "iCodPersonaNavigation.vCelular" },
-                    { "autoWidth": true, "data": "bDesigResolucion" },
-                    { "autoWidth": true, "data": "iCodPersonaNavigation.vTelFijo" },
-                    { "autoWidth": true, "data": "iCodPersonaNavigation.vEmail" },
-                    { className: "center", "data": "iIdComite", "render": formatterAccionesMembers }
-                ]
-            });
-        };
-
-        function getMember(id, fila) {
-            changeTags(false);
-            var dataSet = listDataTable.row(fila).data();
-            var entidad = dataSet.VLAdmMiembros;
-            idComite = id;
-            if (entidad.length > 0) {
-                loadDataMember(entidad);
-            } else {
-
-                dtMembers.context[0].oLanguage.sEmptyTable = "No existen registros";
-                dtMembers.clear().draw();
-            }
-            var textUbigeoFull = 'Ubigeo: <span class="fw-300"><i>' + dataSet.ubigeoFull + '</i></span>'
-            var nroResolucion = 'Resolucion: <span class="fw-300"><i>' + dataSet.iTipResolucionNavigation.descripcion + '- ' + dataSet.vNumResolucion + '</i></span>'
-            $("#divUbigeoFull").html(textUbigeoFull)
-            $("#dicNroResol").html(nroResolucion)
-            rowComiteCurrent = fila;
-        };
-
-        const editAdmin = (id) => {
-            var url = "@Url.Action("addComite", "ComiteAdmin")";
-            $('#modal-container-requer').modal('show');
-            $.get(url, { id: id }, function (data) {
-                $('#Contenido').html(data);
-            });
-        };
-
-        const formatterConcat = (data, type, row) => {
-            return "" + row.iCodPersonaNavigation.vApePaterno + ' ' + row.iCodPersonaNavigation.vApeMaterno + ', ' + row.iCodPersonaNavigation.vNombre + "";
-        };
-
-        const formatterAccionesMembers = (data, type, row, index) => {
-            var edit = '<button type="button" title="Editar" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1"><i class="fal fa-pencil"></i></button>';
-            var remove = edit + '<button type="button" title="Eliminar" class="btn btn-sm btn-icon btn-outline-danger rounded-circle mr-1"><i class="fal fa-times"></i></button>';
-            return remove;
-        }
 
 
 
-        const changeTags = (esChange) => {
-            var seccionTitle = '';
-            if (esChange) {
-                seccionTitle = 'Listado de Comite <span class="fw-300"><i>Administrativo</i></span>'
-                $('#divMember').hide()
-                $('#divTags').show();
-            } else {
-                seccionTitle = 'Listado de Miembros del Comite <span class="fw-300"><i>Administrativo</i></span>'
-                $('#divTags').hide();
-                $('#divMember').show();
-            }
-            $('#divTitleSeccion').html(seccionTitle);
-        }
+
+
 
 
     </script>
