@@ -16,7 +16,7 @@ namespace MIDIS.SGPVL.Entity.Models.ComitePvl
         public bool? bGestante { get; set; }
         public bool? bDiscapacitado { get; set; }
         public bool? bPacTBC { get; set; }
-        public bool? iNumSemGestacion { get; set; }
+        public int? iNumSemGestacion { get; set; }
         public DateTime? dFecParto { get; set; }
         public DateTime? dFecTermLactancia { get; set; }
         public bool? bActivo { get; set; }

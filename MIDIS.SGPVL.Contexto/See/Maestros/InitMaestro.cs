@@ -14,7 +14,7 @@ namespace MIDIS.SGPVL.Contexto.Seed.Maestros
 
         public async Task Create()
         {
-            await new DefaultEnumerado(_context).Create();
+            //await new DefaultEnumerado(_context).Create();
             await new DefaultEnumeradoItem(_context).Create();
             await _context.SaveChangesAsync();
         }

@@ -1,0 +1,189 @@
+﻿@model CmdComiteJdDto;
+
+
+<div class="modal-content">
+    <div class="modal-header" style="background-color:#F0F3FA;border-bottom: 1px solid #E2E6EE;">
+        <h5 class="modal-title">Registro de Junta Directiva</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form id="myFormJundaDirectiva" enctype="multipart/form-data">
+            <input type="hidden" asp-for="iIdJunta" />
+            <div class="panel-content">
+                <div class="form-row form-group">
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="iTipResolucion" class="form-label"></label><span class="text-danger">*</span>
+                        <select asp-for="iTipResolucion" asp-items="@ViewBag.tipoResol"><option value=""></option></select>
+                        <span asp-validation-for="iTipResolucion" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-8 mb-2">
+                        <label asp-for="vNumResolucion" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vNumResolucion" class="form-control">
+                        <span asp-validation-for="vNumResolucion" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="form-group">
+                            <label asp-for="dFecEmision" class="form-label"></label><span class="text-danger">*</span>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+                                </div>
+                                <input type="text" asp-for="dFecEmision" class="form-control" placeholder="Seleccion" aria-label="date" aria-describedby="dFecEmision">
+                            </div>
+                        </div>
+                        <span asp-validation-for="dFecEmision" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="form-group">
+                            <label asp-for="dFecInicio" class="form-label"></label><span class="text-danger">*</span>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+                                </div>
+                                <input type="text" asp-for="dFecInicio" class="form-control" placeholder="Seleccion" aria-label="date" aria-describedby="dFecInicio">
+                            </div>
+                        </div>
+                        <span asp-validation-for="dFecInicio" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="form-group">
+                            <label asp-for="dFecFin" class="form-label"></label><span class="text-danger">*</span>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+                                </div>
+                                <input type="text" asp-for="dFecFin" class="form-control" placeholder="Seleccion" aria-label="date" aria-describedby="dFecFin">
+                            </div>
+                        </div>
+                        <span asp-validation-for="dFecFin" class="text-danger"></span>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <div class="custom-file">
+                            <label class="form-label">Subir Resolucion</label>
+                            <span class="text-info fs-5">Solo Archivos *.pdf [ Máx. 10 Mb ]</span>
+                            <span class="text-danger">*</span>
+                            <input accept="application/pdf" asp-for="FileResol" class="form-control-file">
+                            <span asp-validation-for="FileResol" class="text-danger"></span>
+                            <span id="divMsgErroAdicional" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <label asp-for="vObservacion" class="form-label"></label>
+                        <textarea asp-for="vObservacion"
+                                  rows="4"
+                                  placeholder="Observacion..."
+                                  class="form-control"></textarea>
+                    </div>
+
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-window-close mr-1 fs-lg"></i>Cerrar</button>
+        <button type="submit" class="btn btn-primary" id="btnGrabarJuntaDirectiva"><i class="fas fa-save mr-1 fs-lg"></i>Grabar</button>
+
+        <!--id="btnGrabar"-->
+    </div>
+</div>
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script type="text/javascript">
+
+    var controls = {
+        leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+        rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+    }
+    function validationFunction(evt) {
+        evt.preventDefault()
+        // const data1 = new FormData(oFormElement);
+        const data2 = new FormData(document.getElementById("myFormJundaDirectiva"));
+
+        const form = document.getElementById("myFormJundaDirectiva");
+        // console.log('data1', data1);
+        console.log('data2', data2);
+        console.log('form', form);
+        return false;
+    };
+    $(document).ready(function () {
+        $("#btnGrabarJuntaDirectiva").click(function (e) {
+            e.preventDefault();
+            Swal.fire(
+                {
+                    title: "Confirmacion",
+                    text: "Desea grabar los cambios?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Grabar",
+                    target: document.getElementById('modal-members'),
+                }).then(function (result) {
+                    var $form = $('#myFormJundaDirectiva');
+                    if (result.value) {
+                        if ($form.valid()) {
+                            var formData = new FormData();
+
+                            var data = $('#myFormJundaDirectiva').serializeArray().reduce(function (obj, item) {
+                                formData.append(item.name, item.value);
+                            }, {});
+
+                            var file = document.getElementById("FileResol").files[0];
+                            formData.append("FileResol", file);                                                      
+                            formData.append("iCodComVasLeche", idComPvl);
+                            $.ajax({
+                                url: "@Url.Action("SaveJuntaDirectivaAsync", "ComitePvl")", 
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                type: "POST"
+                            }).done(function (result) {
+                                if (result) {
+                                    $('#modal-members').modal('hide');
+                                    loadDataJuntaDirectiva(idComPvl);
+                                }
+                            }).fail(function (xhr, status, error) {
+                                console.error(xhr, status, error)
+                            }).always(function () {
+
+                            });
+                        }
+                    }
+                });
+        });
+
+        $('#iTipResolucion').select2({ allowClear: true, placeholder: "---TIPO RESOLUCION---" });
+
+        $('#dFecEmision').datepicker({
+            language: 'es',
+            todayHighlight: true,
+            format: 'dd/mm/yyyy',
+            autoclose: true,
+            orientation: "bottom left",
+            templates: controls
+        });
+
+        $('#dFecFin').datepicker({
+            language: 'es',
+            todayHighlight: true,
+            format: 'dd/mm/yyyy',
+            autoclose: true,
+            orientation: "bottom left",
+            templates: controls
+        });
+
+        $('#dFecInicio').datepicker({
+            language: 'es',
+            todayHighlight: true,
+            format: 'dd/mm/yyyy',
+            autoclose: true,
+            orientation: "bottom left",
+            templates: controls
+        });
+
+
+    })
+
+</script>

@@ -43,11 +43,6 @@ namespace MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd
         [Required(ErrorMessage = "El Campo Direccion es obligatorio")]
         public string vDireccion { get; set; }
 
-
-        //Adicionales
-        public string? tipoResolucionTexto { get; set; }
-        public string? UbigeoCompletoFull { get; set; }
-
         #endregion
     }
 }

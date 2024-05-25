@@ -76,7 +76,6 @@ namespace MIDIS.SGPVL.Manager.MappingDto
             CreateMap<VLComVasoLeche, GetComiteDto>();
             CreateMap<VLJunDirectiva, GetComiteJdDto>();
             CreateMap<VLMiembroJuntum, GetMiembroJdDto>();
-            CreateMap<VLMiembroJuntum, GetSocioDto>();
             CreateMap<VLUsuario, GetBeneficiarioDto>();
 
             //CMD

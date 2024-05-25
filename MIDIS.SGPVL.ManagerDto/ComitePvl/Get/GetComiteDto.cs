@@ -21,8 +21,14 @@ namespace MIDIS.SGPVL.ManagerDto.ComitePvl.Get
 
         public GetEnumeradoComboDto iTipAlimentoNavigation { get; set; }
         public GetEnumeradoComboDto iTipOsbNavigation { get; set; }
-        public List<GetMiembroJdDto> VLJunDirectivas { get; set; }
+        public List<GetComiteJdDto> VLJunDirectivas { get; set; }
         public string ubigeoFull { get; set; }
         public string centroPobladoFull { get; set; }
+
+        //Adcionales
+        public string nombrePresidente { get; set; }
+        public string nroDocumento { get; set; }
+        public bool estado { get; set; }
+
     }
 }

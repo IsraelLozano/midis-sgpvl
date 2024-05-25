@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using MIDIS.SGPVL.Manager.ComitePvl;
 using MIDIS.SGPVL.Manager.Maestro;
 using MIDIS.SGPVL.Manager.Settings;
+using MIDIS.SGPVL.ManagerDto.ComiteAdmin.Cmd;
 using MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd;
 using MIDIS.SGPVL.ManagerDto.ComitePvl.Get;
 using MIDIS.SGPVL.ManagerDto.Maestro.Get;
@@ -23,6 +24,8 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
         private readonly IStorageManager _storageManager;
         private readonly ResourceDto _resourceDto;
         private readonly IJuntaDirectivaManager _juntaDirectivaManager;
+        private readonly ISocioManager _socioManager;
+        private readonly IBeneficiarioManager _beneficiarioManager;
 
         public ComitePvlController(ILogger<ComiteAdminController> logger,
             IMaestroManager maestrasManager,
@@ -30,7 +33,9 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
             IStorageManager storageManager,
             ResourceDto resourceDto,
             IComitePvlManager comitePvlManager,
-            IJuntaDirectivaManager juntaDirectivaManager)
+            IJuntaDirectivaManager juntaDirectivaManager,
+            ISocioManager socioManager,
+            IBeneficiarioManager beneficiarioManager)
         {
             _logger = logger;
             _maestrasManager = maestrasManager;
@@ -39,6 +44,8 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
             _resourceDto = resourceDto;
             _comitePvlManager = comitePvlManager;
             _juntaDirectivaManager = juntaDirectivaManager;
+            _socioManager = socioManager;
+            _beneficiarioManager = beneficiarioManager;
         }
 
         public async Task<IActionResult> Index()
@@ -108,12 +115,245 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
 
         #region Junta Directiva
 
-        public async Task<IActionResult> GetLisJuntaDirectivaByIdPvlAsync([FromQuery] int idPvl)
+        [Route("ComitePvl/GetLisJuntaDirectivaByIdPvlAsync/{id}")]
+        public async Task<IActionResult> GetLisJuntaDirectivaByIdPvlAsync(int id)
         {
-            var query = await _juntaDirectivaManager.GetJuntaDirectivaByComiteAsync(idPvl);
-
-
+            var query = await _juntaDirectivaManager.GetJuntaDirectivaByComiteAsync(id);
             return Ok(query);
+        }
+
+        [Route("ComitePvl/GetJuntaDirectivaAsync/{id}")]
+        public async Task<IActionResult> GetJuntaDirectivaAsync([FromQuery] int? id = 0)
+        {
+            var vm = new CmdComiteJdDto();
+
+            if (id.Value > 0)
+            {
+                vm = await _juntaDirectivaManager.GetJuntaByIdAsync(id.Value);
+
+            }
+            List<EnumeradoCabecera> listaMaestra = new List<EnumeradoCabecera>();
+            listaMaestra.Add(EnumeradoCabecera.TIPO_RESOLUCION);
+
+            var combos = await _maestrasManager.GetListEnumeradoByGrupo(listaMaestra);
+            var tipoResolucion = combos[EnumeradoCabecera.TIPO_RESOLUCION].ToList();
+            ViewBag.tipoResol = new SelectList(tipoResolucion, nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.iTipResolucion);
+
+            return PartialView("_addJuntaDirectiva", vm);
+        }
+
+        [HttpPost("ComitePvl/SaveJuntaDirectivaAsync")]
+        public async Task<IActionResult> SaveJuntaDirectivaAsync(CmdComiteJdDto data)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var resp = await _juntaDirectivaManager.AddComiteAdmin(data);
+                return Ok(resp.iIdJunta > 0);
+            }
+            List<EnumeradoCabecera> listaMaestra = new List<EnumeradoCabecera>();
+            listaMaestra.Add(EnumeradoCabecera.TIPO_RESOLUCION);
+
+            var combos = await _maestrasManager.GetListEnumeradoByGrupo(listaMaestra);
+            var tipoResolucion = combos[EnumeradoCabecera.TIPO_RESOLUCION].ToList();
+            ViewBag.tipoResol = new SelectList(tipoResolucion, nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), data.iTipResolucion);
+
+            return PartialView("_addJuntaDirectiva", data);
+        }
+
+        #endregion
+
+        #region Miembro - Junta Directiva
+
+        [HttpPost("ComitePvl/SaveMiembroJunta")]
+        public async Task<IActionResult> SaveMiembroJunta(CmdMiembroJdDto data)
+        {
+            if (ModelState.IsValid)
+            {
+                await _juntaDirectivaManager.AddComiteMemberAdmin(data);
+                var miembros = await _juntaDirectivaManager.GetMiembrosByJuntaAsync(data.iIdJunta);
+
+                return Ok(miembros);
+            }
+
+            await getComboMemberAsync(data);
+            return PartialView("_addMiembroJuntaDirectiva", data);
+        }
+
+        [Route("ComitePvl/GetMiembroJunta/{id}")]
+        public async Task<IActionResult> GetMiembroJunta(int? id = 0)
+        {
+            var vm = new CmdMiembroJdDto();
+
+            if (id.Value > 0)
+            {
+                vm = await _juntaDirectivaManager.GetMiembroJuntaByIdAsync(id.Value);
+
+            }
+
+            await getComboMemberAsync(vm);
+            List<EnumeradoCabecera> listaMaestra = new List<EnumeradoCabecera>();
+            listaMaestra.Add(EnumeradoCabecera.TIPO_CARGOS);
+
+            var combos = await _maestrasManager.GetListEnumeradoByGrupo(listaMaestra);
+            ViewBag.cargos = new SelectList(combos[EnumeradoCabecera.TIPO_CARGOS].ToList(), nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.iTipCargo);
+
+            return PartialView("_addMiembroJuntaDirectiva", vm);
+        }
+
+        [NonAction]
+        public async Task getComboMemberAsync(CmdMiembroJdDto vm)
+        {
+            List<EnumeradoCabecera> listaMaestra = new List<EnumeradoCabecera>();
+            listaMaestra.Add(EnumeradoCabecera.TIPO_CARGO_JD);
+            listaMaestra.Add(EnumeradoCabecera.TIPO_DOCUMENTO);
+            listaMaestra.Add(EnumeradoCabecera.GENERO);
+
+            var combos = await _maestrasManager.GetListEnumeradoByGrupo(listaMaestra);
+
+            ViewBag.tipoCargo = new SelectList(combos[EnumeradoCabecera.TIPO_CARGO_JD].ToList(), nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.iTipCargo);
+            ViewBag.tipoDocumentos = new SelectList(combos[EnumeradoCabecera.TIPO_DOCUMENTO].ToList(), nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.iTipDocumento);
+            ViewBag.generos = new SelectList(combos[EnumeradoCabecera.GENERO].ToList(), nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.bSexo);
+        }
+
+        #endregion
+
+        #region Socio - Junta Directiva
+
+        [Route("ComitePvl/GetLisSocioByIdPvlAsync/{id}")]
+        public async Task<IActionResult> GetLisSocioByIdPvlAsync(int id)
+        {
+            var query = await _socioManager.GetListSocioByComiteAsync(id);
+            return Ok(query);
+        }
+
+
+        [HttpPost("ComitePvl/SaveSocioJunta")]
+        public async Task<IActionResult> SaveSocioJunta(CmdSocioDto data)
+        {
+            if (ModelState.IsValid)
+            {
+                await _socioManager.AddSocioAsync(data);
+                var miembros = await _socioManager.GetListSocioByComiteAsync(data.iCodComVasLeche);
+
+                return Ok(miembros);
+            }
+
+            await getComboSocioAsync(data);
+            return PartialView("_addSocioJuntaDirectiva", data);
+        }
+
+        [Route("ComitePvl/GetSocioJunta/{id}")]
+        public async Task<IActionResult> GetSocioJunta(int? id = 0)
+        {
+            var vm = new CmdSocioDto();
+
+            if (id.Value > 0)
+            {
+                vm = await _socioManager.GetSocioByIdAsync(id.Value);
+
+            }
+
+            await getComboSocioAsync(vm);
+            return PartialView("_addSocioJuntaDirectiva", vm);
+        }
+
+        [NonAction]
+        public async Task getComboSocioAsync(CmdSocioDto vm)
+        {
+            List<EnumeradoCabecera> listaMaestra = new List<EnumeradoCabecera>();
+            listaMaestra.Add(EnumeradoCabecera.TIPO_SOCIO);
+            listaMaestra.Add(EnumeradoCabecera.TIPO_DOCUMENTO);
+            listaMaestra.Add(EnumeradoCabecera.GENERO);
+
+            var combos = await _maestrasManager.GetListEnumeradoByGrupo(listaMaestra);
+
+            ViewBag.tipoSocio = new SelectList(combos[EnumeradoCabecera.TIPO_SOCIO].ToList(), nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.iTipSocio);
+            ViewBag.tipoDocumentos = new SelectList(combos[EnumeradoCabecera.TIPO_DOCUMENTO].ToList(), nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.iTipDocumento);
+            ViewBag.generos = new SelectList(combos[EnumeradoCabecera.GENERO].ToList(), nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.bSexo);
+        }
+
+        #endregion
+
+
+        #region Beneficiario - Junta Directiva
+
+        [Route("ComitePvl/GetLisBeneficiarioByIdPvlAsync/{id}")]
+        public async Task<IActionResult> GetListBeneficiarioByIdPvlAsync(int id)
+        {
+            var query = await _beneficiarioManager.GetListBeneficiarioByComiteAsync(id);
+            return Ok(query);
+        }
+
+
+        [HttpPost("ComitePvl/SaveBeneficiarioJunta")]
+        public async Task<IActionResult> SaveBeneficiarioJunta(CmdBeneficiarioDto data)
+        {
+            if (ModelState.IsValid)
+            {
+                await _beneficiarioManager.AddBeneficiarioAsync(data);
+                var miembros = await _beneficiarioManager.GetListBeneficiarioByComiteAsync(data.iCodComVasLeche);
+
+                return Ok(miembros);
+            }
+
+            await getComboBeneficiarioAsync(data);
+            return PartialView("_addBeneficiarioJuntaDirectiva", data);
+        }
+
+        [Route("ComitePvl/GetBeneficiarioJunta/{id}")]
+        public async Task<IActionResult> GetBeneficiarioJunta(int? id = 0)
+        {
+            var vm = new CmdBeneficiarioDto();
+
+            if (id.Value > 0)
+            {
+                vm = await _beneficiarioManager.GetBeneficiarioByIdAsync(id.Value);
+            }
+
+            await getComboBeneficiarioAsync(vm);
+            return PartialView("_addBeneficiarioJuntaDirectiva", vm);
+        }
+
+        [NonAction]
+        public async Task getComboBeneficiarioAsync(CmdBeneficiarioDto vm)
+        {
+            List<EnumeradoCabecera> listaMaestra = new List<EnumeradoCabecera>();
+            listaMaestra.Add(EnumeradoCabecera.TIPO_CLASIFICACION_SOCIO_ECONOMICA);
+            listaMaestra.Add(EnumeradoCabecera.TIPO_DOCUMENTO);
+            listaMaestra.Add(EnumeradoCabecera.GENERO);
+
+            var combos = await _maestrasManager.GetListEnumeradoByGrupo(listaMaestra);
+
+            ViewBag.tipoDocumentos = new SelectList(combos[EnumeradoCabecera.TIPO_DOCUMENTO].ToList(), nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.iTipDocumento);
+            ViewBag.claEcono = new SelectList(combos[EnumeradoCabecera.TIPO_CLASIFICACION_SOCIO_ECONOMICA].ToList(), nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.vClaSocEconomica);
+            ViewBag.generos = new SelectList(combos[EnumeradoCabecera.GENERO].ToList(), nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.bSexo);
+        }
+
+        #endregion
+
+        #region download - file
+
+        [Route("ComitePvl/downloadResolucionAsync/{id}")]
+        public async Task<IActionResult> downloadResolucionAsync(int id)
+        {
+            try
+            {
+                var response = await _juntaDirectivaManager.GetJuntaByIdAsync(id);
+
+                if (response == null)
+                {
+                    return NotFound();
+                }
+                var fullPath = Path.Combine(_resourceDto.Documents, response.vNomArcGuid);
+                byte[] fileBytes = _storageManager.GetBytes(fullPath);
+                return File(fileBytes, "application/pdf", response.vNomArchivo);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+                throw ex;
+            }
         }
         #endregion
 

@@ -37,6 +37,7 @@ namespace MIDIS.SGPVL.Contexto.Seed.Maestros
                 new VLEnumerado { vDescripcion = "TIPO SOCIO", bActivo = true },
                 new VLEnumerado { vDescripcion = "TIPO CLASIFICACION", bActivo = true },
                 new VLEnumerado { vDescripcion = "TIPO CLASIFICACION SOCIO ECONOMICA", bActivo = true },
+                new VLEnumerado { vDescripcion = "TIPO CARGO JD", bActivo = true },
             };
             await CreateMaestraIfNotExists(enumerado);
         }

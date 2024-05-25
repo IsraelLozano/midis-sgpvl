@@ -1,0 +1,149 @@
+﻿@model CmdMiembroJdDto
+
+<div class="modal-content">
+    <div class="modal-header" style="background-color:#F0F3FA;border-bottom: 1px solid #E2E6EE;">
+        <h5 class="modal-title">Registrar Miembro</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form id="formMember" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="iIdMiembro" />
+            <div class="panel-content">
+
+                <div class="form-row form-group">
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="iTipCargo" class="form-label"></label><span class="text-danger">*</span>
+                        <select asp-for="iTipCargo" asp-items="@ViewBag.tipoCargo"><option value=""></option></select>
+                        <span asp-validation-for="iTipCargo" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="iTipDocumento" class="form-label"></label><span class="text-danger">*</span>
+                        <select asp-for="iTipDocumento" asp-items="@ViewBag.tipoDocumentos"><option value=""></option></select>
+                        <span asp-validation-for="iTipDocumento" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vNroDocumento" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vNroDocumento" class="form-control">
+                        <span asp-validation-for="vNroDocumento" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vApePaterno" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vApePaterno" class="form-control">
+                        <span asp-validation-for="vApePaterno" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vApeMaterno" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vApeMaterno" class="form-control">
+                        <span asp-validation-for="vApeMaterno" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vNombre" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vNombre" class="form-control">
+                        <span asp-validation-for="vNombre" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="bSexo" class="form-label"></label><span class="text-danger">*</span>
+                        <select asp-for="bSexo" asp-items="@ViewBag.generos"><option value=""></option></select>
+                        <span asp-validation-for="bSexo" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-8 mb-2">
+                        <label asp-for="vDireccion" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vDireccion" class="form-control">
+                        <span asp-validation-for="vDireccion" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vTelFijo" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vTelFijo" class="form-control">
+                        <span asp-validation-for="vTelFijo" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vCelular" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vCelular" class="form-control">
+                        <span asp-validation-for="vCelular" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vEmail" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vEmail" class="form-control">
+                        <span asp-validation-for="vEmail" class="text-danger"></span>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <div class="modal-footer bg-gray-200">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            <i class="fas fa-window-close mr-1 fs-lg"></i>
+            Cerrar
+        </button>
+        <button type="submit" class="btn btn-primary" id="btnGrabarMember">
+            <i class="fas fa-save mr-1 fs-lg"></i>Grabar
+        </button>
+    </div>
+</div>
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#iTipCargo').select2({ allowClear: true, placeholder: "---SELECCIONE CARGO---" });
+        $('#iTipDocumento').select2({ allowClear: true, placeholder: "---SELECCIONE TIPO DOC.---" });
+        $('#bSexo').select2({ allowClear: true, placeholder: "---SELECCIONE SEXO---" });
+
+        $("#btnGrabarMember").click(function (e) {
+            e.preventDefault();
+            Swal.fire(
+                {
+                    title: "Confirmacion",
+                    text: "Desea grabar los cambios?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Grabar",
+                    target: document.getElementById('modal-members-junta')
+                }).then(function (result) {
+                    var $form = $('#formMember');
+                    if (result.value) {
+                        if ($form.valid()) {
+                            var formData = new FormData();
+
+                            var data = $('#formMember').serializeArray().reduce(function (obj, item) {
+                                formData.append(item.name, item.value);
+                            }, {});                           
+
+                            formData.append("iIdJunta", idJunta);
+
+                            $.ajax({
+                                url: "@Url.Action("SaveMiembroJunta", "ComitePvl")", // Url
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                type: "POST"
+                            }).done(function (result) {
+                                if (result) {
+                                    $('#modal-members-junta').modal('hide');
+                                    renderUpdateMiembros(result);
+                                }
+                            }).fail(function (xhr, status, error) {
+                            }).always(function () {
+
+                            });
+                        }
+                    }
+                });
+        });
+    })
+
+</script>

@@ -9,14 +9,23 @@ namespace MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd
         public int iCodComVasLeche { get; set; }
         public int? iIdSocio { get; set; }
         public int? iClasificacion { get; set; }
+        [Display(Name = "Clase Economica")]
+        [Required(ErrorMessage = "El Campo Clase Economica es obligatorio")] 
         public string vClaSocEconomica { get; set; }
-        public bool? bGestante { get; set; }
-        public bool? bDiscapacitado { get; set; }
-        public bool? bPacTBC { get; set; }
-        public bool? iNumSemGestacion { get; set; }
+        [Display(Name = "Es Gestante?")]
+        public bool bGestante { get; set; }
+        [Display(Name = "Es Discapacitado?")]
+        public bool bDiscapacitado { get; set; }
+        [Display(Name = "Paciente TBC?")] 
+        public bool bPacTBC { get; set; }
+        [Display(Name = "Nro Semanas Gestacion")]
+        public int iNumSemGestacion { get; set; }
+        [Display(Name = "Fecha de Parto")]
         public DateTime? dFecParto { get; set; }
+        [Display(Name = "Fecha Termino de Lactancia")]
         public DateTime? dFecTermLactancia { get; set; }
         public bool? bActivo { get; set; }
+
 
         #region Datos-Persona
         [Display(Name = "Ape. Paterno")]
@@ -48,6 +57,11 @@ namespace MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd
         [Display(Name = "Direccion")]
         [Required(ErrorMessage = "El Campo Direccion es obligatorio")]
         public string vDireccion { get; set; }
+
+        [Display(Name = "F. Nacimiento")]
+        [Required(ErrorMessage = "El Campo Fecha Nacimiento es obligatorio")]
+        public DateTime dFecNacimiento { get; set; }
+
         #endregion
     }
 }

@@ -54,10 +54,10 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
 
         }
 
-        public async Task<GetComiteJdDto> GetJuntaByIdAsync(int id)
+        public async Task<CmdComiteJdDto> GetJuntaByIdAsync(int id)
         {
             var query = _comiteUnitOfWork._junDirectivaRepository.GetAll(l => l.iIdJunta == id, includeProperties: "iTipResolucionNavigation").FirstOrDefault();
-            var response = _mapper.Map<GetComiteJdDto>(query);
+            var response = _mapper.Map<CmdComiteJdDto>(query);
             return response;
         }
 
@@ -160,6 +160,13 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
 
         }
 
+        public async Task<CmdMiembroJdDto> GetMiembroJuntaByIdAsync(int id)
+        {
+            var query = _comiteUnitOfWork._miembroJuntaRepository.GetById(id);
+            return _mapper.Map<CmdMiembroJdDto>(query);
+        }
+
+        #endregion
         private VLPersona getPersona(CmdMiembroJdDto model)
         {
             var persona = new VLPersona
@@ -190,7 +197,5 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
             return persona;
 
         }
-
-        #endregion
     }
 }

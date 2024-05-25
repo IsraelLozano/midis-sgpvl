@@ -1,0 +1,217 @@
+﻿@model CmdSocioDto
+
+<div class="modal-content">
+    <div class="modal-header" style="background-color:#F0F3FA;border-bottom: 1px solid #E2E6EE;">
+        <h5 class="modal-title">Registrar Socio</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form id="formSocio" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="iIdSocio" />
+            <div class="panel-content">
+
+                <div class="form-row form-group">
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="iTipSocio" class="form-label"></label><span class="text-danger">*</span>
+                        <select asp-for="iTipSocio" asp-items="@ViewBag.tipoSocio"><option value=""></option></select>
+                        <span asp-validation-for="iTipSocio" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="iTipDocumento" class="form-label"></label><span class="text-danger">*</span>
+                        <select asp-for="iTipDocumento" asp-items="@ViewBag.tipoDocumentos"><option value=""></option></select>
+                        <span asp-validation-for="iTipDocumento" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vNroDocumento" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vNroDocumento" class="form-control">
+                        <span asp-validation-for="vNroDocumento" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vApePaterno" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vApePaterno" class="form-control">
+                        <span asp-validation-for="vApePaterno" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vApeMaterno" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vApeMaterno" class="form-control">
+                        <span asp-validation-for="vApeMaterno" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vNombre" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vNombre" class="form-control">
+                        <span asp-validation-for="vNombre" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="bSexo" class="form-label"></label><span class="text-danger">*</span>
+                        <select asp-for="bSexo" asp-items="@ViewBag.generos"><option value=""></option></select>
+                        <span asp-validation-for="bSexo" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-8 mb-2">
+                        <label asp-for="vDireccion" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vDireccion" class="form-control">
+                        <span asp-validation-for="vDireccion" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vTelFijo" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vTelFijo" class="form-control">
+                        <span asp-validation-for="vTelFijo" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vCelular" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vCelular" class="form-control">
+                        <span asp-validation-for="vCelular" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="vEmail" class="form-label"></label><span class="text-danger">*</span>
+                        <input asp-for="vEmail" class="form-control">
+                        <span asp-validation-for="vEmail" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <div class="custom-control custom-checkbox">
+
+                            <input type="checkbox" asp-for="bGestante" class="custom-control-input">
+                            <label asp-for="bGestante" class="custom-control-label"></label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label asp-for="iNumSemGestacion" class="form-label"></label>
+                        <input asp-for="iNumSemGestacion" class="form-control">
+                    </div>
+
+
+                    <div class="col-md-4 mb-2">
+                        <div class="form-group">
+                            <label asp-for="dFecParto" class="form-label"></label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+                                </div>
+                                <input type="text" asp-for="dFecParto" class="form-control" placeholder="Seleccion" aria-label="date" aria-describedby="dFecParto">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <div class="form-group">
+                            <label asp-for="dFecTermLactancia" class="form-label"></label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+                                </div>
+                                <input type="text" asp-for="dFecTermLactancia" class="form-control" placeholder="Seleccion" aria-label="date" aria-describedby="dFecTermLactancia">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" asp-for="bDiscapacitado" class="custom-control-input">
+                            <label asp-for="bDiscapacitado" class="custom-control-label"></label>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer bg-gray-200">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            <i class="fas fa-window-close mr-1 fs-lg"></i>
+            Cerrar
+        </button>
+        <button type="submit" class="btn btn-primary" id="btnGrabarSocio">
+            <i class="fas fa-save mr-1 fs-lg"></i>Grabar
+        </button>
+    </div>
+</div>
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script type="text/javascript">
+
+    var controls = {
+        leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+        rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+    }
+
+    $(document).ready(function () {
+
+        $('#iTipSocio').select2({ allowClear: true, placeholder: "---SELECCIONE CARGO---" });
+        $('#iTipDocumento').select2({ allowClear: true, placeholder: "---SELECCIONE TIPO DOC.---" });
+        $('#bSexo').select2({ allowClear: true, placeholder: "---SELECCIONE SEXO---" });
+
+        $("#btnGrabarSocio").click(function (e) {
+            e.preventDefault();
+            Swal.fire(
+                {
+                    title: "Confirmacion",
+                    text: "Desea grabar los cambios?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Grabar",
+                    target: document.getElementById('modal-socios-junta')
+                }).then(function (result) {
+                    var $form = $('#formSocio');
+                    if (result.value) {
+                        if ($form.valid()) {
+                            var formData = new FormData();
+
+                            var data = $('#formSocio').serializeArray().reduce(function (obj, item) {
+                                formData.append(item.name, item.value);
+                            }, {});
+
+                            formData.append("iCodComVasLeche", idComPvl);
+                            $.ajax({
+                                url: "@Url.Action("SaveSocioJunta", "ComitePvl")", // Url
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                type: "POST"
+                            }).done(function (result) {
+                                if (result) {
+                                    $('#modal-socios-junta').modal('hide');
+                                    loadDataSocioJunta(idComPvl);
+                                }
+                            }).fail(function (xhr, status, error) {
+                            }).always(function () {
+
+                            });
+                        }
+                    }
+                });
+        });
+
+
+        $('#dFecParto').datepicker({
+            language: 'es',
+            todayHighlight: true,
+            format: 'dd/mm/yyyy',
+            autoclose: true,
+            orientation: "bottom left",
+            templates: controls
+        });
+
+        $('#dFecTermLactancia').datepicker({
+            language: 'es',
+            todayHighlight: true,
+            format: 'dd/mm/yyyy',
+            autoclose: true,
+            orientation: "bottom left",
+            templates: controls
+        });
+
+    })
+
+</script>

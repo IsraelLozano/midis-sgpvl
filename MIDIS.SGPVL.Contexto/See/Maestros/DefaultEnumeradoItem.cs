@@ -131,6 +131,12 @@ namespace MIDIS.SGPVL.Contexto.Seed.Maestros
                 new VLEnumItem { iIdEnumerado = (int)EnumeradoCabecera.TIPO_CLASIFICACION_SOCIO_ECONOMICA, vDescripcion = "POBRE EXTREMO", bActivo = true },
                 new VLEnumItem { iIdEnumerado = (int)EnumeradoCabecera.TIPO_CLASIFICACION_SOCIO_ECONOMICA, vDescripcion = "NO POBRE", bActivo = true },
                 new VLEnumItem { iIdEnumerado = (int)EnumeradoCabecera.TIPO_CLASIFICACION_SOCIO_ECONOMICA, vDescripcion = "NO CLASIFICADO", bActivo = true },
+                
+                //TIPO CARGO JD = 17
+                new VLEnumItem { iIdEnumerado = (int)EnumeradoCabecera.TIPO_CARGO_JD, vDescripcion = "PRESIDENTE", bActivo = true },
+                new VLEnumItem { iIdEnumerado = (int)EnumeradoCabecera.TIPO_CARGO_JD, vDescripcion = "VICE PRESIDENTE", bActivo = true },
+                new VLEnumItem { iIdEnumerado = (int)EnumeradoCabecera.TIPO_CARGO_JD, vDescripcion = "TESORERO", bActivo = true },
+                new VLEnumItem { iIdEnumerado = (int)EnumeradoCabecera.TIPO_CARGO_JD, vDescripcion = "ALMACENERO", bActivo = true },
             };
             await CreateVLEnumItemIfNotExists(listaItem);
         }

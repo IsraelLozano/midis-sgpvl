@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MIDIS.SGPVL.Entity.Models.ComitePvl;
+using MIDIS.SGPVL.Entity.Models.Persona;
 using MIDIS.SGPVL.Manager.Settings;
 using MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd;
 using MIDIS.SGPVL.ManagerDto.ComitePvl.Get;
 using MIDIS.SGPVL.Repository.UnitOfWork;
+using MIDIS.SGPVL.Utils.Enumerados;
 using System;
 using System.Threading.Tasks;
 
@@ -55,7 +57,18 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
                 {
                     entidad.dFecRegistro = entidad.dFecModifica = DateTime.Now;
                     entidad.vUsuRegistro = entidad.vUsuModifica = _aplicationConstants.UsuarioSesionBE.Credenciales;
+                    entidad.bActivo = true;
+
+                    var persona = getPersona(model);
+
+                    _personaUnitOfWork._personaRepository.Insert(persona);
+
+                    await _personaUnitOfWork.SaveAsync();
+
+                    entidad.iCodPersona = persona.iCodPersona;
+
                     _comiteUnitOfWork._socioReposiroty.Insert(entidad);
+
                 }
                 else
                 {
@@ -63,6 +76,17 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
                     _comiteUnitOfWork._socioReposiroty.Update(entidad);
                 }
                 await _comiteUnitOfWork.SaveAsync();
+
+                //Actualizar nro Miembros 
+                var comite = _comiteUnitOfWork._comitePVLRepository.GetById(model.iCodComVasLeche);
+
+                comite.iNumSocio = _comiteUnitOfWork._socioReposiroty.GetAll(l => l.iCodComVasLeche == model.iCodComVasLeche).Count;
+
+                _comiteUnitOfWork._comitePVLRepository.Update(comite);
+
+                await _comiteUnitOfWork.SaveAsync();
+
+
                 return _mapper.Map<CmdSocioDto>(entidad);
             }
             catch (Exception ex)
@@ -78,5 +102,38 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
             entity.bActivo = false;
             return (await _comiteUnitOfWork.SaveAsync()) == 1;
         }
+
+
+        private VLPersona getPersona(CmdSocioDto model)
+        {
+            var persona = new VLPersona
+            {
+                iTipPersona = (int)EnumTipoPersona.natural,
+                vNomComercial = $"{model.vApePaterno} {model.vApeMaterno}, {model.vNombre}",
+                vNomCompleto = $"{model.vApePaterno} {model.vApeMaterno}, {model.vNombre}",
+                vRuc = string.Empty,
+                bEstado = true
+            };
+            persona.VLPerNatural = new VLPerNatural
+            {
+                vApePaterno = model.vApePaterno,
+                vApeMaterno = model.vApeMaterno,
+                vNombre = model.vNombre,
+                vNroDocumento = model.vNroDocumento,
+                bActivo = true,
+                iTipDocumento = model.iTipDocumento,
+                bSexo = model.bSexo,
+                vTelFijo = model.vTelFijo,
+                vCelular = model.vCelular,
+                vEmail = model.vEmail,
+                vDireccion = model.vDireccion,
+                vUbigeo = string.Empty,
+                dFecNacimiento = null
+            };
+
+            return persona;
+
+        }
+
     }
 }

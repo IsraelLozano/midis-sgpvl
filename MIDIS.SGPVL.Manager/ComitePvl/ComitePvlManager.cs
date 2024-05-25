@@ -53,7 +53,7 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
                 .GetAll(l =>
                 l.vCodCentPoblado == param.idCentroPoblado,
                 //&& (filtro.Contains(l.vNomComite + l.vCodComite) || filtro == ""),
-                includeProperties: "iTipAlimentoNavigation,iTipOsbNavigation,VLJunDirectivas.iTipResolucionNavigation,VLJunDirectivas.VLMiembroJunta.iCodPersonaNavigation,VLJunDirectivas.VLMiembroJunta.iTipCargoNavigation");
+                includeProperties: "iTipAlimentoNavigation,iTipOsbNavigation,VLJunDirectivas.iTipResolucionNavigation,VLJunDirectivas.VLMiembroJunta.iCodPersonaNavigation.iTipDocumentoNavigation,VLJunDirectivas.VLMiembroJunta.iTipCargoNavigation");
             }
             else
             {
@@ -62,7 +62,7 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
                 .GetAll(l =>
                 l.vCodCentPoblado.StartsWith(ubigeo),
                 //&& (filtro.Contains(l.vNomComite + l.vCodComite) || filtro == ""),
-                includeProperties: "iTipAlimentoNavigation,iTipOsbNavigation,VLJunDirectivas.iTipResolucionNavigation,VLJunDirectivas.VLMiembroJunta.iCodPersonaNavigation,VLJunDirectivas.VLMiembroJunta.iTipCargoNavigation");
+                includeProperties: "iTipAlimentoNavigation,iTipOsbNavigation,VLJunDirectivas.iTipResolucionNavigation,VLJunDirectivas.VLMiembroJunta.iCodPersonaNavigation.iTipDocumentoNavigation,VLJunDirectivas.VLMiembroJunta.iTipCargoNavigation");
             }
 
 
@@ -79,6 +79,15 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
                 var fullUbigeo = listUbigeos.FirstOrDefault(l => l.codigo == u.vUbigeo);
                 u.ubigeoFull = fullUbigeo.full();
                 u.centroPobladoFull = listCentroPoblados.FirstOrDefault(l => l.codigo == u.vCodCentPoblado).descripcion;
+                var presidente = u.VLJunDirectivas.Where(l => l.VLMiembroJunta.Any(s => s.iTipCargo == 79)).Select(p => p.VLMiembroJunta.Select(o => o.iCodPersonaNavigation)).FirstOrDefault();
+                var estActivo = u.VLJunDirectivas.Where(l => l.VLMiembroJunta.Any(s => s.iTipCargo == 79)).Select(p => p.VLMiembroJunta).FirstOrDefault();
+                if (presidente != null)
+                {
+                    u.nombrePresidente = $"{presidente.First().vApePaterno} {presidente.First().vApeMaterno}, {presidente.First().vNombre}";
+                    u.nroDocumento = $"{presidente.First().iTipDocumentoNavigation.descripcion}: {presidente.First().vNroDocumento}";
+                    u.estado = estActivo.FirstOrDefault().bActivo.Value;
+                }
+
             });
             return response;
         }

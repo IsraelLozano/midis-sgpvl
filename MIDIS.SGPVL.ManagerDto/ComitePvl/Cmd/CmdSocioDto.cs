@@ -4,20 +4,17 @@ namespace MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd
 {
     public class CmdSocioDto
     {
-        public int iIdUsuario { get; set; }
+        public int iIdSocio { get; set; }
         public int iCodPersona { get; set; }
         public int iCodComVasLeche { get; set; }
-        public int? iIdSocio { get; set; }
-        public int? iClasificacion { get; set; }
-        public string vClaSocEconomica { get; set; }
-        public bool? bGestante { get; set; }
-        public bool? bDiscapacitado { get; set; }
-        public bool? bPacTBC { get; set; }
-        public bool? iNumSemGestacion { get; set; }
+        public int iTipSocio { get; set; }
+        public bool bGestante { get; set; }
+        public bool bDiscapacitado { get; set; }
+        public int? iNumSemGestacion { get; set; }
         public DateTime? dFecParto { get; set; }
         public DateTime? dFecTermLactancia { get; set; }
-        public bool? bActivo { get; set; }
-
+        public bool bActivo { get; set; }
+        
         #region Datos-Persona
         [Display(Name = "Ape. Paterno")]
         [Required(ErrorMessage = "El Campo Ape. Paterno es obligatorio")]
