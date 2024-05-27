@@ -103,6 +103,12 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
             return (await _comiteUnitOfWork.SaveAsync()) == 1;
         }
 
+        public async Task<List<GetSocioDto>> GetListSocioByUbigeo(string idUbigeo)
+        {
+            var query = _comiteUnitOfWork._socioReposiroty.GetAll(l => l.iCodComVasLecheNavigation.vUbigeo == idUbigeo
+            , includeProperties: "iCodPersonaNavigation");
+            return _mapper.Map<List<GetSocioDto>>(query);
+        }
 
         private VLPersona getPersona(CmdSocioDto model)
         {
@@ -134,6 +140,5 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
             return persona;
 
         }
-
     }
 }

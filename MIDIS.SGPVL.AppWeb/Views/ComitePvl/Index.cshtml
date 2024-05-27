@@ -114,8 +114,9 @@
                                             <span class="sr-only">Toggle Dropdown</span>
                                         </button>
                                         <div class="dropdown-menu">
-                                            <button class="dropdown-item" id="btnExportarComite" data-url="@Url.Action("GetExcelComiteAdministrativoAsync", "ComiteAdmin")">Comites</button>
-                                            <button class="dropdown-item" id="btnExportarMiembro" data-url="@Url.Action("GetExcelComiteMembersAdminiAsync", "ComiteAdmin")">Miembros</button>
+                                            <button class="dropdown-item" id="btnExportarJuntaDirectiva" data-url="@Url.Action("GetExcelJuntaDirectivaAsync")">Junta Directiva</button>
+                                            <button class="dropdown-item" id="btnExportarJuntaDirectiva2" data-url="@Url.Action("GetExcelSociosAsync")">Socios</button>
+                                            <button class="dropdown-item" id="btnExportarJuntaDirectiva3" data-url="@Url.Action("GetExcelBeneficiariosAsync")">Beneficiarios</button>
                                         </div>
                                     </div>
                                 </div>
@@ -366,6 +367,7 @@
                 var url = $(this).data('url') + "/0";
                 $('#modal-members').modal('show');
                 $('#contenidoMembers').html("");
+                $('#contenidoMembersJunta').html("");
                 $('#contenidoSociosJunta').html("");
                 $('#contenidoUsuarioJunta').html("");
                 $.get(url, null, function (data) {
@@ -376,6 +378,8 @@
             $('#btnAddSociosModal').click(function () {
                 var url = $(this).data('url') + "/0";
                 $('#modal-socios-junta').modal('show');
+                $('#contenidoMembers').html("");
+                $('#contenidoMembersJunta').html("");
                 $('#contenidoSociosJunta').html("");
                 $('#contenidoUsuarioJunta').html("");
                 $.get(url, null, function (data) {
@@ -384,8 +388,14 @@
             });
 
             $('#btnAddUsuariosModal').click(function () {
-                var url = $(this).data('url') + "/0";
+                if ($("#idUbigeo").val() == '' || $("#idUbigeo").val() == null) {
+                    Swal.fire('Debe seleccionar un distrito.');
+                    return;
+                }
+                var url = $(this).data('url') + "/0/" + $("#idUbigeo").val();
                 $('#modal-usuario-junta').modal('show');
+                $('#contenidoMembers').html("");
+                $('#contenidoMembersJunta').html("");
                 $('#contenidoUsuarioJunta').html("");
                 $('#contenidoSociosJunta').html("");
                 $.get(url, null, function (data) {
@@ -404,6 +414,107 @@
             $('#btnUsuarioReturn').click(function () {
                 changeTags("divTags");
             });
+
+
+            $('#btnExportarJuntaDirectiva').click(function () {
+                var datos = {
+                    idDptoSelect: $("#idDptoSelect").val(),
+                    idProvSelect: $("#idProvSelect").val(),
+                    idUbigeoSelect: $("#idUbigeo").val(),
+                };
+
+                if (datos.idDptoSelect === '') {
+                    Swal.fire(
+                        {
+                            title: "Aviso",
+                            text: "Debe seleccionar al menos un filtro de busqueda.",
+                            icon: "warning",
+                        });
+                    return;
+                }
+                var codigo = '';
+
+                if ($("#idProvSelect").val() == '' || $("#idProvSelect").val() == null) {
+                    codigo = datos.idDptoSelect;
+                } else {
+                    if ($("#idUbigeo").val() == '' || $("#idUbigeo").val() == null) {
+                        codigo = datos.idDptoSelect.concat(datos.idProvSelect)
+                    } else {
+                        codigo = datos.idUbigeoSelect
+                    }
+                }
+
+                var url = $(this).data('url') + "/" + codigo
+
+                window.location = url;
+            });
+
+            $('#btnExportarJuntaDirectiva2').click(function () {
+                var datos = {
+                    idDptoSelect: $("#idDptoSelect").val(),
+                    idProvSelect: $("#idProvSelect").val(),
+                    idUbigeoSelect: $("#idUbigeo").val(),
+                };
+
+                if (datos.idDptoSelect === '') {
+                    Swal.fire(
+                        {
+                            title: "Aviso",
+                            text: "Debe seleccionar al menos un filtro de busqueda.",
+                            icon: "warning",
+                        });
+                    return;
+                }
+                var codigo = '';
+
+                if ($("#idProvSelect").val() == '' || $("#idProvSelect").val() == null) {
+                    codigo = datos.idDptoSelect;
+                } else {
+                    if ($("#idUbigeo").val() == '' || $("#idUbigeo").val() == null) {
+                        codigo = datos.idDptoSelect.concat(datos.idProvSelect)
+                    } else {
+                        codigo = datos.idUbigeoSelect
+                    }
+                }
+
+                var url = $(this).data('url') + "/" + codigo
+
+                window.location = url;
+            });
+
+            $('#btnExportarJuntaDirectiva3').click(function () {
+                var datos = {
+                    idDptoSelect: $("#idDptoSelect").val(),
+                    idProvSelect: $("#idProvSelect").val(),
+                    idUbigeoSelect: $("#idUbigeo").val(),
+                };
+
+                if (datos.idDptoSelect === '') {
+                    Swal.fire(
+                        {
+                            title: "Aviso",
+                            text: "Debe seleccionar al menos un filtro de busqueda.",
+                            icon: "warning",
+                        });
+                    return;
+                }
+                var codigo = '';
+
+                if ($("#idProvSelect").val() == '' || $("#idProvSelect").val() == null) {
+                    codigo = datos.idDptoSelect;
+                } else {
+                    if ($("#idUbigeo").val() == '' || $("#idUbigeo").val() == null) {
+                        codigo = datos.idDptoSelect.concat(datos.idProvSelect)
+                    } else {
+                        codigo = datos.idUbigeoSelect
+                    }
+                }
+
+                var url = $(this).data('url') + "/" + codigo
+
+                window.location = url;
+            });
+
 
             dtJuntaDirectiva.on('click', 'td.dt-control', function (e) {
                 filaTableJuntaSelect = e.target.closest('tr');
@@ -478,12 +589,12 @@
 
                 "columns": [
                     { "width": "5%","data": "vCodComite", "autoWidth": true },
-                    { "width": "10%","data": "ubigeoFull", "autoWidth": true },
-                    { "width": "10%","data": "centroPobladoFull", "autoWidth": true },
+                    { "width": "15%","data": "ubigeoFull", "autoWidth": true },
+                    { "width": "8%","data": "centroPobladoFull", "autoWidth": true },
                     { "width": "10%","data": "iTipOsbNavigation.descripcion", "autoWidth": true },
                     { "width": "10%","data": "vNomComite", "autoWidth": true },
                     {
-                        "width": "10%","data": "bActivo", "autoWidth": true, "render": function (data, type, row) {
+                        "width": "5%","data": "bActivo", "autoWidth": true, "render": function (data, type, row) {
                             if (row.bActivo) {
                                 return '<strong class="text-info fw-700">Activo</strong>';
                             } else {
@@ -491,20 +602,19 @@
                             }
                         }
                     },
-                    { "width": "10%","data": "iCodComVasLeche", "autoWidth": true, "render": formatterPresidenteFull },
-                    { "width": "10%","data": "iNumSocio", "autoWidth": true },
-                    { "width": "10%","data": "iNumUsuario", "autoWidth": true },
-                    { "width": "10%","data": "iCodComVasLeche", "render": formatterAcciones }
+                    { "width": "12%","data": "iCodComVasLeche", "autoWidth": true, "render": formatterPresidenteFull },
+                    { "width": "5%","data": "iNumSocio", "autoWidth": true },
+                    { "width": "5%","data": "iNumUsuario", "autoWidth": true },
+                    { "width": "8%","data": "iCodComVasLeche", "render": formatterAcciones }
                 ],
-
-                // "columnDefs": [
-                //     { className: "text-center", "targets": [0, 3, 4, 5, 6, 7] },
-                //     { className: "text-center", "targets": [9] },
-                //     {
-                //         targets: [4, 5, 6],
-                //         render: fnRenderDate
-                //     }
-                // ],
+                "columnDefs": [
+                    { className: "text-center", "targets": [5, 7, 8,9] },
+                    // { className: "text-center", "targets": [9] },
+                    // {
+                    //     targets: [4, 5, 6],
+                    //     render: fnRenderDate
+                    // }
+                ],
                 searchDelay: 350
             });
         }
@@ -702,7 +812,10 @@
             idJunta = id;
             var url = "@Url.Action("GetMiembroJunta", "ComitePvl")" + "/" + 0;
             $('#modal-members-junta').modal('show');
+            $('#contenidoMembers').html("");
             $('#contenidoMembersJunta').html("");
+            $('#contenidoUsuarioJunta').html("");
+            $('#contenidoSociosJunta').html("");
             $.get(url, null, function (data) {
                 $('#contenidoMembersJunta').html(data);
             });
@@ -736,43 +849,24 @@
                     info: false,
                     data: entidad,
                     "columns": [
-                        { "autoWidth": true, "data": "iIdSocio" },
-                        { "autoWidth": true, "data": "iTipSocioNavigation.descripcion" },
-                        { "autoWidth": true, "data": "iIdMiembro", render: formatterSocioConcat },
-                        { "autoWidth": true, "data": "iCodPersonaNavigation.vDireccion" },
-                        { "autoWidth": true, "data": "bGestante" },
-                        { "autoWidth": true, "data": "iNumSemGestacion" },
-                        { "autoWidth": true, "data": "bDiscapacitado" },
-                        { "autoWidth": true, "data": "iCodPersonaNavigation.vEmail" },
-                        { className: "center", "data": "iIdSocio" }
+                        { "width": "2%", "autoWidth": true, "data": "iIdSocio" },
+                        { "width": "3%", "autoWidth": true, "data": "iTipSocioNavigation.descripcion" },
+                        { "width": "10%", "autoWidth": true, "data": "iIdMiembro", render: formatterSocioConcat },
+                        { "width": "8%" ,"autoWidth": true, "data": "iCodPersonaNavigation.vDireccion" },
+                        { "width": "2%", "autoWidth": true, "data": "bGestante", render: formatterStateGestanteSocio },
+                        { "width": "2%", "autoWidth": true, "data": "iNumSemGestacion" },
+                        { "width": "2%", "autoWidth": true, "data": "bDiscapacitado", render: formatterStateDiscapacitadoSocio },
+                        { "width": "5%", "autoWidth": true, "data": "iCodPersonaNavigation.vEmail" },
+                        { "width": "2%", "data": "iIdSocio", render: formattersSocioAcciones }
                     ],
-                    // "columns": [
-                    //     { "data": "iIdJunta", "autoWidth": true },
-                    //     { "data": "iTipResolucionNavigation.descripcion", "autoWidth": true },
-                    //     { "data": "vNumResolucion", "autoWidth": true, render: formatterDownLoadFile },
-                    //     { "data": "dFecEmision", "autoWidth": true },
-                    //     { "data": "dFecInicio", "autoWidth": true },
-                    //     { "data": "dFecFin", "autoWidth": true },
-                    //     {
-                    //         "data": "bVigente", "autoWidth": true, "render": function (data, type, row) {
-                    //             if (row.bVigente) {
-                    //                 return '<strong class="text-info">SI</strong>';
-                    //             } else {
-                    //                 return '<strong class="text-danger">NO</strong>';
-                    //             }
-                    //         }
-                    //     },
-                    //     { "data": "iNumMiembro", "autoWidth": true },
-                    //     { "data": "iIdJunta", "render": formatterPvlAcciones }
-                    // ],
-                    // "columnDefs": [
-                    //     { className: "text-center", "targets": [3, 4, 5, 6, 7,8] },
-                    //     // { className: "text-center", "targets": [9] },
-                    //     {
-                    //         targets: [3, 4, 5],
-                    //         render: fnRenderDate
-                    //     }
-                    // ],
+                    "columnDefs": [
+                        { className: "text-center", "targets": [4, 5, 6, 8] },
+                        // { className: "text-center", "targets": [9] },
+                        // {
+                        //     targets: [4, 5, 6],
+                        //     render: fnRenderDate
+                        // }
+                    ],
                     searchDelay: 350
                 });
             });
@@ -807,6 +901,27 @@
             });
         };
 
+        const formattersSocioAcciones = (data, type, row, index) => {
+            var edit = '<button type="button" title="Editar" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" onclick="editUsuario(' + row.iIdSocio + ');" ><i class="fal fa-pencil"></i></button>';
+            var remove = edit + '<button type="button" title="Eliminar" class="btn btn-sm btn-icon btn-outline-danger rounded-circle mr-1"><i class="fal fa-times"></i></button>';
+            return remove;
+        }
+
+        const formatterStateGestanteSocio = (data, type, row) => {
+            if (row.bGestante) {
+                return '<strong class="text-info fw-700">Si</strong>';
+            } else {
+                return '<strong class="fw-700">No</strong>';
+            }
+        };
+
+        const formatterStateDiscapacitadoSocio = (data, type, row) => {
+            if (row.bDiscapacitado) {
+                return '<strong class="text-info fw-700">Si</strong>';
+            } else {
+                return '<strong class="fw-700">No</strong>';
+            }
+        };
 
         /*
         ***** Usuario Junta
@@ -832,32 +947,87 @@
                     info: false,
                     data: entidad,
                     "columns": [
-                        { "autoWidth": true, "data": "iIdSocio" },
-                        { "autoWidth": true, "data": "iTipSocioNavigation.descripcion" },
-                        { "autoWidth": true, "data": "iIdMiembro", render: formatterSocioConcat },
-                        { "autoWidth": true, "data": "iCodPersonaNavigation.vDireccion" },
-                        { "autoWidth": true, "data": "bGestante" },
-                        { "autoWidth": true, "data": "iNumSemGestacion" },
-                        { "autoWidth": true, "data": "bDiscapacitado" },
-                        { "autoWidth": true, "data": "iCodPersonaNavigation.vEmail" },
-                        { className: "center", "data": "iIdSocio" }
+                        { "width": "2%", "autoWidth": true, "data": "iIdUsuario" },
+                        { "width": "8%", "autoWidth": true, "data": "iIdSocio", render: formatterSocioUsuarioConcat },
+                        { "width": "3%", "autoWidth": true, "data": "iClasificacionNavigation.descripcion"  },
+                        { "width": "12%", "autoWidth": true, "data": "iIdUsuario", render: formatterUsuarioDatosPersonales },
+                        { "width": "8%", "autoWidth": true, "data": "iCodPersonaNavigation.vDireccion" },
+                        { "width": "2%", "autoWidth": true, "data": "bGestante", render: formatterStateGestante },
+                        { "width": "2%", "autoWidth": true, "data": "iNumSemGestacion" },
+                        { "width": "2%", "autoWidth": true, "data": "bDiscapacitado", render: formatterStateDiscapacitado },
+                        { "width": "2%", "autoWidth": true, "data": "bPacTBC", render: formatterStateTBC },
+                        { "width": "10%", "autoWidth": true, "data": "iIdUsuario", render: formatterUsuarioConcat },
+                        { "width": "5%", "data": "iIdSocio", render: formatterUsuarioAcciones }
+                    ],
+                    "columnDefs": [
+                        { className: "text-center", "targets": [2, 5, 6, 7,8] },
+                        // { className: "text-center", "targets": [9] },
+                        // {
+                        //     targets: [4, 5, 6],
+                        //     render: fnRenderDate
+                        // }
                     ],
                    
                     searchDelay: 350
                 });
             });
-
-
         };
 
+        const formatterStateGestante = (data, type, row) => {
+            if (row.bGestante) {
+                return '<strong class="text-info fw-700">Si</strong>';
+            } else {
+                return '<strong class="fw-700">No</strong>';
+            }
+        };
+
+        const formatterStateDiscapacitado = (data, type, row) => {
+            if (row.bDiscapacitado) {
+                return '<strong class="text-info fw-700">Si</strong>';
+            } else {
+                return '<strong class="fw-700">No</strong>';
+            }
+        };
+        
+        const formatterStateTBC = (data, type, row) => {
+            if (row.bPacTBC) {
+                return '<strong class="text-info fw-700">Si</strong>';
+            } else {
+                return '<strong class="fw-700">No</strong>';
+            }
+        };
+        
         const formatterUsuarioConcat = (data, type, row) => {
-            return "" + row.iCodPersonaNavigation.vApePaterno + ' ' + row.iCodPersonaNavigation.vApeMaterno + ', ' + row.iCodPersonaNavigation.vNombre + "";
+            var htmlTemplate = `                               
+                                <span> Cel `+ row.iCodPersonaNavigation.vCelular + `</span> <br>
+                                <span> Telf: `+ row.iCodPersonaNavigation.vTelFijo + `</span><br>
+                                <span> Email: `+ row.iCodPersonaNavigation.vEmail + `</span><br>`;
+            return htmlTemplate;
         };
+        
+        const formatterUsuarioDatosPersonales = (data, type, row) => {
+            var htmlTemplate = `
+                                <span> `+ row.fullNameUsuario + `</span> <br>
+                                <span> `+ row.NroDocUsuario + `</span> <br>
+                                <span> FN: `+ row.fechaNacimiento + `</span>
+                                <span> Edad: `+ row.edad + `</span>`;
+            return htmlTemplate;
+        };
+
+        const formatterSocioUsuarioConcat = (data, type, row) => {
+            return `<span>` + row.fullNameSocio + `</span><br> <span>` + row.NroDocumentoSocio + `</span>`;
+        };
+
+        const formatterUsuarioAcciones = (data, type, row, index) => {
+            var edit = '<button type="button" title="Editar" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" onclick="editUsuario(' + row.iIdJunta + ');" ><i class="fal fa-pencil"></i></button>';
+            var remove = edit + '<button type="button" title="Eliminar" class="btn btn-sm btn-icon btn-outline-danger rounded-circle mr-1"><i class="fal fa-times"></i></button>';
+            return remove;
+        }
 
         function getPageUsuarioJunta(id, fila) {
-            idComPvl = id;
-            // var dataSet = listUsuarioDataTable.row(fila).data();
-            // loadDataUsuarioJunta(id);
+            
+            var dataSet = listUsuarioDataTable.row(fila).data();
+            loadDataUsuarioJunta(id);
 
             // var textUbigeoFull = 'Centro Poblado: <span class="fw-300"><i>' + dataSet.ubigeoFull + ' / ' + dataSet.centroPobladoFull + '</i></span>'
             // var nroResolucion = 'Comite: <span class="fw-300"><i>' + dataSet.vCodComite + '- ' + dataSet.vNomComite + '</i></span>'

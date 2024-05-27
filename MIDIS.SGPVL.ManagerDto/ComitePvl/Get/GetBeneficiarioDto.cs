@@ -14,7 +14,7 @@ namespace MIDIS.SGPVL.ManagerDto.ComitePvl.Get
         public bool? bGestante { get; set; }
         public bool? bDiscapacitado { get; set; }
         public bool? bPacTBC { get; set; }
-        public bool? iNumSemGestacion { get; set; }
+        public int? iNumSemGestacion { get; set; }
         public DateTime? dFecParto { get; set; }
         public DateTime? dFecTermLactancia { get; set; }
         public bool? bActivo { get; set; }
@@ -26,5 +26,13 @@ namespace MIDIS.SGPVL.ManagerDto.ComitePvl.Get
         public GetEnumeradoComboDto iClasificacionNavigation { get; set; }
         public GetPersonaNaturalDto iCodPersonaNavigation { get; set; }
         public GetSocioDto iIdSocioNavigation { get; set; }
+        public string fullNameSocio { get; set; }
+        public string NroDocumentoSocio { get; set; }
+
+        public string fullNameUsuario { get; set; }
+        public string NroDocUsuario { get; set; }
+        public string fechaNacimiento { get; set; }
+        public int edad { get; set; }
+
     }
 }

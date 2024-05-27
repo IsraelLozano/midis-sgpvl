@@ -54,6 +54,17 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
 
         }
 
+        public async Task<List<GetComiteJdDto>> GetJuntaDirectivaAllComiteAsync()
+        {
+            var response = new List<GetComiteJdDto>();
+            var query = _comiteUnitOfWork
+                ._junDirectivaRepository
+                .GetAll(includeProperties: "iTipResolucionNavigation,VLMiembroJunta.iCodPersonaNavigation.iTipDocumentoNavigation,VLMiembroJunta.iTipCargoNavigation");
+
+            return _mapper.Map<List<GetComiteJdDto>>(query);
+
+        }
+
         public async Task<CmdComiteJdDto> GetJuntaByIdAsync(int id)
         {
             var query = _comiteUnitOfWork._junDirectivaRepository.GetAll(l => l.iIdJunta == id, includeProperties: "iTipResolucionNavigation").FirstOrDefault();
@@ -109,6 +120,15 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
             var query = _comiteUnitOfWork
            ._miembroJuntaRepository
            .GetAll(l => l.iIdJunta == idJunta, includeProperties: "iTipCargoNavigation,iCodPersonaNavigation.iTipDocumentoNavigation");
+            var resp = _mapper.Map<List<GetMiembroJdDto>>(query);
+            return resp;
+        }
+        
+        public async Task<List<GetMiembroJdDto>> GetMiembrosAllJuntaAsync()
+        {
+            var query = _comiteUnitOfWork
+           ._miembroJuntaRepository
+           .GetAll(includeProperties: "iTipCargoNavigation,iCodPersonaNavigation.iTipDocumentoNavigation");
             var resp = _mapper.Map<List<GetMiembroJdDto>>(query);
             return resp;
         }

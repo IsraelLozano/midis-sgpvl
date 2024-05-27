@@ -89,6 +89,36 @@ namespace MIDIS.SGPVL.Manager.MappingDto
             CreateMap<VLSocio, CmdSocioDto>().ReverseMap();
 
 
+            //Usuario
+
+            CreateMap<VLUsuario, GetBeneficiarioDto>()
+                .ForMember(dest => dest.fullNameSocio, source => source.MapFrom(s =>
+                $"{s.iIdSocioNavigation.iCodPersonaNavigation.vApePaterno} {s.iIdSocioNavigation.iCodPersonaNavigation.vApeMaterno}, {s.iIdSocioNavigation.iCodPersonaNavigation.vNombre}"
+
+                ))
+                .ForMember(dest => dest.NroDocumentoSocio, source => source.MapFrom(s =>
+                $"{s.iIdSocioNavigation.iCodPersonaNavigation.iTipDocumentoNavigation.vDescripcion}: " +
+                $"{s.iIdSocioNavigation.iCodPersonaNavigation.vNroDocumento}"
+                ))
+                .ForMember(dest => dest.fullNameUsuario, source => source.MapFrom(s =>
+                $"{s.iCodPersonaNavigation.vApePaterno} {s.iCodPersonaNavigation.vApeMaterno}, {s.iCodPersonaNavigation.vNombre}"
+
+                ))
+                .ForMember(dest => dest.NroDocUsuario, source => source.MapFrom(s =>
+                $"{s.iCodPersonaNavigation.iTipDocumentoNavigation.vDescripcion} :" +
+                $"{s.iCodPersonaNavigation.vNroDocumento}"
+                ))
+                .ForMember(dest => dest.fechaNacimiento, source => source.MapFrom(s => s.iCodPersonaNavigation.dFecNacimiento.Value.ToShortDateString()
+                ))
+
+                .ForMember(dest => dest.edad, source => source.MapFrom(s =>
+                        Math.Round(((DateTime.Now - s.iCodPersonaNavigation.dFecNacimiento.Value).TotalDays / 365.25D), 0, MidpointRounding.ToZero)
+                ))
+                ;
+            CreateMap<VLUsuario, CmdBeneficiarioDto>().ReverseMap();
+
+
+
             #endregion
         }
     }

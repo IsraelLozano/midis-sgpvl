@@ -11,12 +11,14 @@ namespace MIDIS.SGPVL.ManagerDto.ComitePvl.Get
         public int iTipSocio { get; set; }
         public bool? bGestante { get; set; }
         public bool? bDiscapacitado { get; set; }
-        public bool? iNumSemGestacion { get; set; }
+        public int? iNumSemGestacion { get; set; }
         public DateTime? dFecParto { get; set; }
         public DateTime? dFecTermLactancia { get; set; }
         public bool? bActivo { get; set; }
 
         public GetPersonaNaturalDto iCodPersonaNavigation { get; set; }
         public GetEnumeradoComboDto iTipSocioNavigation { get; set; }
+        public string nombreCompleto { get; set; }
+        public string nombreFull() => $"{iCodPersonaNavigation.vApePaterno} {iCodPersonaNavigation.vApeMaterno}, {iCodPersonaNavigation.vNombre}";
     }
 }

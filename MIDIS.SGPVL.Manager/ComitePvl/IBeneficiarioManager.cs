@@ -1,4 +1,5 @@
 ﻿using MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd;
+using MIDIS.SGPVL.ManagerDto.ComitePvl.Get;
 
 namespace MIDIS.SGPVL.Manager.ComitePvl
 {
@@ -7,6 +8,6 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
         Task<CmdBeneficiarioDto> AddBeneficiarioAsync(CmdBeneficiarioDto model);
         Task<bool> DeleteBeneficiarioAsync(int id);
         Task<CmdBeneficiarioDto> GetBeneficiarioByIdAsync(int id);
-        Task<List<CmdBeneficiarioDto>> GetListBeneficiarioByComiteAsync(int idComite);
+        Task<List<GetBeneficiarioDto>> GetListBeneficiarioByComiteAsync(int idComite);
     }
 }

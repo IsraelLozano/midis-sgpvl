@@ -62,6 +62,12 @@
         femenino = 47
     }
 
+    public enum EnumPrioridad
+    {
+        PRIORIDAD_1=72	,
+        PRIORIDAD_2= 73
+    }
+
 
 
 }

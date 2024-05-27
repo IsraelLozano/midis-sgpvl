@@ -2,7 +2,7 @@
 
 <div class="modal-content">
     <div class="modal-header" style="background-color:#F0F3FA;border-bottom: 1px solid #E2E6EE;">
-        <h5 class="modal-title">Registrar Beneficiario</h5>
+        <h5 class="modal-title fw-700">Registro de Beneficiario</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"><i class="fal fa-times"></i></span>
         </button>
@@ -13,19 +13,25 @@
             <div class="panel-content">
 
                 <div class="form-row form-group">
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-3 mb-2">
+                        <label asp-for="iIdSocio" class="form-label"></label><span class="text-danger">*</span>
+                        <select asp-for="iIdSocio" asp-items="@ViewBag.listSocios"><option value=""></option></select>
+                        <span asp-validation-for="iIdSocio" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-3 mb-2">
                         <label asp-for="vClaSocEconomica" class="form-label"></label><span class="text-danger">*</span>
                         <select asp-for="vClaSocEconomica" asp-items="@ViewBag.claEcono"><option value=""></option></select>
                         <span asp-validation-for="vClaSocEconomica" class="text-danger"></span>
                     </div>
 
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-3 mb-2">
                         <label asp-for="iTipDocumento" class="form-label"></label><span class="text-danger">*</span>
                         <select asp-for="iTipDocumento" asp-items="@ViewBag.tipoDocumentos"><option value=""></option></select>
                         <span asp-validation-for="iTipDocumento" class="text-danger"></span>
                     </div>
 
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-3 mb-2">
                         <label asp-for="vNroDocumento" class="form-label"></label><span class="text-danger">*</span>
                         <input asp-for="vNroDocumento" class="form-control">
                         <span asp-validation-for="vNroDocumento" class="text-danger"></span>
@@ -62,7 +68,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
                                 </div>
-                                <input type="text" asp-for="dFecNacimiento" class="form-control" placeholder="Seleccion" value="" aria-label="date" aria-describedby="dFecNacimiento">
+                                <input type="text" asp-for="dFecNacimiento" class="form-control" placeholder="Seleccion" value="" aria-label="date" onchange="ageCalculator(this);" aria-describedby="dFecNacimiento">
                             </div>
                         </div>
                     </div>
@@ -119,31 +125,31 @@
                     </div>
 
 
-                    <div class="col-md-2 mb-2">
+                    <div class="col-md-2 mb-2 divGestacion">
                         <label asp-for="iNumSemGestacion" class="form-label"></label>
                         <input asp-for="iNumSemGestacion" class="form-control">
                     </div>
 
-                    <div class="col-md-2 mb-2">
+                    <div class="col-md-2 mb-2 divGestacion">
                         <div class="form-group">
                             <label asp-for="dFecParto" class="form-label"></label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
                                 </div>
-                                <input type="text" asp-for="dFecParto" class="form-control" placeholder="Seleccion" aria-label="date" aria-describedby="dFecParto">
+                                <input type="text" asp-for="dFecParto" class="form-control" placeholder="Seleccion" aria-label="date" onchange="onFechaParto(this);" aria-describedby="dFecParto">
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-2 mb-2">
+                    <div class="col-md-2 mb-2 divGestacion">
                         <div class="form-group">
                             <label asp-for="dFecTermLactancia" class="form-label"></label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
                                 </div>
-                                <input type="text" asp-for="dFecTermLactancia" class="form-control" placeholder="Seleccion" aria-label="date" aria-describedby="dFecTermLactancia">
+                                <input type="text" asp-for="dFecTermLactancia" class="form-control" placeholder="Seleccion" aria-label="date" aria-describedby="dFecTermLactancia" disabled>
                             </div>
                         </div>
                     </div>
@@ -168,6 +174,7 @@
 
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/asset/js/dependency/moment/moment.js"></script>
 <script type="text/javascript">
 
     var controls = {
@@ -177,7 +184,10 @@
 
     $(document).ready(function () {
 
+        $('.divGestacion').hide();
+
         $('#vClaSocEconomica').select2({ allowClear: true, placeholder: "---SELECCIONE CLASE ECON.---" });
+        $('#iIdSocio').select2({ allowClear: true, placeholder: "---SELECCIONE SOCIO---" });
         $('#iTipDocumento').select2({ allowClear: true, placeholder: "---SELECCIONE TIPO DOC.---" });
         $('#bSexo').select2({ allowClear: true, placeholder: "---SELECCIONE SEXO---" });
 
@@ -211,7 +221,7 @@
                             }).done(function (result) {
                                 if (result) {
                                     $('#modal-usuario-junta').modal('hide');
-                                    loadDataSocioJunta(idComPvl);
+                                    loadDataUsuarioJunta(idComPvl);
                                 }
                             }).fail(function (xhr, status, error) {
                             }).always(function () {
@@ -223,6 +233,15 @@
         });
 
 
+        $("#bGestante").change(function () {
+            if (this.checked) {
+                $('.divGestacion').show();
+            }
+            else {
+                $('.divGestacion').hide();
+            }
+        });
+       
         $('#dFecParto').datepicker({
             language: 'es',
             todayHighlight: true,
@@ -250,6 +269,22 @@
             templates: controls
         });
 
-    })
+    })  
 
+    function onFechaParto(val) {
+        const dob = moment(val.value, 'DD/MM/YYYY').toDate();
+        const currentDate = moment(); // Get the current date and time
+        const futureDate = moment(dob).add(2, 'years'); // Add 30 years to the current date
+        document.getElementById("dFecTermLactancia").value = futureDate.format("DD/MM/YYYY");
+    };
+
+    function ageCalculator(val) {
+
+        var userinput = val.value;
+        const date = moment(userinput, 'DD/MM/YYYY');
+        const years = moment().diff(date, 'years');
+        const days = moment().diff(date.add(years, 'years'), 'days', false);
+        document.getElementById("txtEdad").value = years;
+
+    }
 </script>

@@ -7,6 +7,8 @@ namespace MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd
         public int iIdUsuario { get; set; }
         public int iCodPersona { get; set; }
         public int iCodComVasLeche { get; set; }
+        [Display(Name = "Socio")]
+        [Required(ErrorMessage = "El Campo de Socio es obligatorio")]
         public int? iIdSocio { get; set; }
         public int? iClasificacion { get; set; }
         [Display(Name = "Clase Economica")]

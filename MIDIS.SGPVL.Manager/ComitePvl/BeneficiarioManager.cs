@@ -3,6 +3,7 @@ using MIDIS.SGPVL.Entity.Models.ComitePvl;
 using MIDIS.SGPVL.Entity.Models.Persona;
 using MIDIS.SGPVL.Manager.Settings;
 using MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd;
+using MIDIS.SGPVL.ManagerDto.ComitePvl.Get;
 using MIDIS.SGPVL.Repository.UnitOfWork;
 using MIDIS.SGPVL.Utils.Enumerados;
 
@@ -26,15 +27,16 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
             _personaUnitOfWork = personaUnitOfWork;
         }
 
-        public async Task<List<CmdBeneficiarioDto>> GetListBeneficiarioByComiteAsync(int idComite)
+        public async Task<List<GetBeneficiarioDto>> GetListBeneficiarioByComiteAsync(int idComite)
         {
-            var response = new List<CmdBeneficiarioDto>();
+            var response = new List<GetBeneficiarioDto>();
             var query = _comiteUnitOfWork
                 ._usuarioRepository
                 .GetAll(l => l.iCodComVasLeche == idComite,
-                includeProperties: "iTipBeneficiarioNavigation,iCodPersonaNavigation.iTipDocumentoNavigation");
+                includeProperties: "iIdSocioNavigation.iCodPersonaNavigation.iTipDocumentoNavigation," +
+                "iClasificacionNavigation,iCodPersonaNavigation.iTipDocumentoNavigation");
 
-            return _mapper.Map<List<CmdBeneficiarioDto>>(query);
+            return _mapper.Map<List<GetBeneficiarioDto>>(query);
         }
 
         public async Task<CmdBeneficiarioDto> GetBeneficiarioByIdAsync(int id)
@@ -54,7 +56,7 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
                     entidad.dFecRegistro = entidad.dFecModifica = DateTime.Now;
                     entidad.vUsuRegistro = entidad.vUsuModifica = _aplicationConstants.UsuarioSesionBE.Credenciales;
                     entidad.bActivo = true;
-                    
+
                     var persona = getPersona(model);
 
                     _personaUnitOfWork._personaRepository.Insert(persona);
@@ -62,6 +64,9 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
                     await _personaUnitOfWork.SaveAsync();
 
                     entidad.iCodPersona = persona.iCodPersona;
+
+                    var prioridad = getPrioridad(model);
+                    entidad.iClasificacion = prioridad;
 
                     _comiteUnitOfWork._usuarioRepository.Insert(entidad);
                 }
@@ -75,7 +80,7 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
 
                 var comite = _comiteUnitOfWork._comitePVLRepository.GetById(model.iCodComVasLeche);
 
-                comite.iNumSocio = _comiteUnitOfWork._usuarioRepository.GetAll(l => l.iCodComVasLeche == model.iCodComVasLeche).Count;
+                comite.iNumUsuario = _comiteUnitOfWork._usuarioRepository.GetAll(l => l.iCodComVasLeche == model.iCodComVasLeche).Count;
 
                 _comiteUnitOfWork._comitePVLRepository.Update(comite);
 
@@ -87,6 +92,46 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
             {
                 throw ex;
             }
+        }
+
+        private int getPrioridad(CmdBeneficiarioDto model)
+        {
+            int prioridadFinal = 0;
+            var edadReal = Math.Round(((DateTime.Now - model.dFecNacimiento).TotalDays / 365.25D), 0, MidpointRounding.ToZero);
+            if (edadReal >= 0 && edadReal <= 6)
+            {
+                prioridadFinal = (int)EnumPrioridad.PRIORIDAD_1;
+            }
+            else if (edadReal >= 7 && edadReal <= 13)
+            {
+                prioridadFinal = (int)EnumPrioridad.PRIORIDAD_2;
+            }
+            else if ((edadReal >= 60))
+            {
+                prioridadFinal = (int)EnumPrioridad.PRIORIDAD_2;
+            }
+
+            if (model.bGestante)
+            {
+                prioridadFinal = (int)EnumPrioridad.PRIORIDAD_1;
+            }
+            if (model.dFecTermLactancia >= DateTime.Now)
+            {
+                prioridadFinal = (int)EnumPrioridad.PRIORIDAD_1;
+            }
+
+            if (model.bPacTBC)
+            {
+                prioridadFinal = (int)EnumPrioridad.PRIORIDAD_1;
+            }
+
+            if (model.bDiscapacitado)
+            {
+                prioridadFinal = (int)EnumPrioridad.PRIORIDAD_2;
+            }
+
+            return prioridadFinal;
+
         }
 
         public async Task<bool> DeleteBeneficiarioAsync(int id)
@@ -120,7 +165,7 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
                 vEmail = model.vEmail,
                 vDireccion = model.vDireccion,
                 vUbigeo = string.Empty,
-                dFecNacimiento = null
+                dFecNacimiento = model.dFecNacimiento
             };
 
             return persona;

@@ -6,6 +6,10 @@ using MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd;
 using MIDIS.SGPVL.ManagerDto.ComitePvl.Get;
 using MIDIS.SGPVL.ManagerDto.Maestro.Get;
 using MIDIS.SGPVL.Repository.UnitOfWork;
+using OfficeOpenXml.Style;
+using OfficeOpenXml;
+using Azure;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MIDIS.SGPVL.Manager.ComitePvl
 {
@@ -16,18 +20,21 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
         private readonly IMaestroManager _maestraManager;
         private readonly IAplicationConstants _aplicationConstants;
         private readonly ComiteUnitOfWork _comiteUnitOfWork;
+        private readonly IJuntaDirectivaManager _juntaDirectivaManager;
 
         public ComitePvlManager(IMapper mapper,
             MaestroUnitOfWork maestraUnitOfWork,
             IMaestroManager maestraManager,
             IAplicationConstants aplicationConstants,
-            ComiteUnitOfWork comiteUnitOfWork)
+            ComiteUnitOfWork comiteUnitOfWork,
+            IJuntaDirectivaManager juntaDirectivaManager)
         {
             _mapper = mapper;
             _maestraUnitOfWork = maestraUnitOfWork;
             _maestraManager = maestraManager;
             _aplicationConstants = aplicationConstants;
             _comiteUnitOfWork = comiteUnitOfWork;
+            _juntaDirectivaManager = juntaDirectivaManager;
         }
 
         public async Task<GetComiteParams> GetComiteFilters(string filter)
@@ -41,7 +48,18 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
 
         public async Task<List<GetComiteDto>> GetComiteList(GetComiteParams param)
         {
-            var ubigeo = string.IsNullOrEmpty(param.idCentroPoblado) ? $"{param.idDptoSelect}{param.idProvSelect}{param.idUbigeo}" : param.idCentroPoblado;
+            string ubigeo = string.Empty;
+            if (string.IsNullOrEmpty(param.idUbigeo))
+            {
+                ubigeo = $"{param.idDptoSelect}{param.idProvSelect}";
+            }
+            else
+            {
+                ubigeo = param.idUbigeo;
+            }
+
+            ubigeo = string.IsNullOrEmpty(param.idCentroPoblado) ? ubigeo : param.idCentroPoblado;
+
             var filtro = param.search?.value ?? "";
 
             var query = new List<VLComVasoLeche>();
@@ -134,6 +152,318 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
         }
 
 
+        #region Exportar - Excel
+
+        public async Task<MemoryStream> GetExcelJuntaDirectivaAsync(string codUbigeo)
+        {
+            var data = await _juntaDirectivaManager
+                    .GetMiembrosAllJuntaAsync();
+
+            //var ubigeos = data.Select(s => s.iIdComiteNavigation.vUbigeo).Distinct().ToList();
+            //var listUbigeos = await _maestraManager.getDistritoFull(ubigeos);
+            //data.ForEach(u =>
+            //{
+            //    var fullUbigeo = listUbigeos.FirstOrDefault(l => l.codigo == u.iIdComiteNavigation.vUbigeo);
+            //    u.dpto = fullUbigeo.dpto;
+            //    u.provincia = fullUbigeo.provincia;
+            //    u.distrito = fullUbigeo.descripcion;
+            //});
+
+            var stream = new MemoryStream();
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var xlPackage = new ExcelPackage(stream))
+            {
+                var worksheet = xlPackage.Workbook.Worksheets.Add("COMITE ADMIN");
+                var namedStyle = xlPackage.Workbook.Styles.CreateNamedStyle("HyperLink");
+                namedStyle.Style.Font.UnderLine = true;
+                namedStyle.Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                const int startRow = 5;
+                var row = startRow;
+                worksheet.View.ShowGridLines = false;
+
+                worksheet.Cells["A1"].Value = "LISTADO MIEMBROS DE JUNTA DIRECTIVA";
+                using (var r = worksheet.Cells["A1:M1"])
+                {
+                    r.Merge = true;
+                    r.Style.Font.Color.SetColor(System.Drawing.Color.White);
+                    r.Style.Font.Size = 15;
+                    r.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous;
+                    r.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    r.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(23, 55, 93));
+                }
+
+                worksheet.Cells["A4"].Value = "Codigo";
+                worksheet.Cells["B4"].Value = "Tipo Resolucion";
+                worksheet.Cells["C4"].Value = "Nro Resolucion";
+                worksheet.Cells["D4"].Value = "Cargo";
+                worksheet.Cells["F4"].Value = "Tipo Doc";
+                worksheet.Cells["G4"].Value = "Nro Doc";
+                worksheet.Cells["H4"].Value = "Ape. Paterno";
+                worksheet.Cells["I4"].Value = "Ape. Materno";
+                worksheet.Cells["J4"].Value = "Nombres";
+                worksheet.Cells["K4"].Value = "Celular";
+                worksheet.Cells["L4"].Value = "Tel. Fijo";
+                worksheet.Cells["M4"].Value = "Correo";
+                worksheet.Cells["A4:M4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:M4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(184, 204, 228));
+                worksheet.Cells["A4:M4"].Style.Font.Bold = true;
+
+                row = 5;
+
+                foreach (var item in data)
+                {
+                    worksheet.Cells[row, 1].Value = item.iIdJunta;
+                    worksheet.Cells[row, 2].Value = 0;
+                    worksheet.Cells[row, 3].Value = 0;
+                    worksheet.Cells[row, 4].Value = item.iTipCargoNavigation.descripcion;
+                    worksheet.Cells[row, 5].Value = item.iCodPersonaNavigation.iTipDocumentoNavigation.descripcion;
+                    worksheet.Cells[row, 6].Value = item.iCodPersonaNavigation.vNroDocumento;
+                    worksheet.Cells[row, 7].Value = item.iCodPersonaNavigation.vApePaterno;
+                    worksheet.Cells[row, 8].Value = item.iCodPersonaNavigation.vApeMaterno;
+                    worksheet.Cells[row, 9].Value = item.iCodPersonaNavigation.vNombre;
+                    worksheet.Cells[row, 10].Value = item.iCodPersonaNavigation.vCelular;
+                    worksheet.Cells[row, 11].Value = item.iCodPersonaNavigation.vTelFijo;
+                    worksheet.Cells[row, 12].Value = item.iCodPersonaNavigation.vEmail;
+                    row++;
+                }
+
+                var sRango = "A4:M" + (row - 1).ToString();
+                worksheet.Cells[sRango].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+
+                worksheet.Cells[sRango].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[sRango].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[sRango].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[sRango].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
+                worksheet.Cells[sRango].AutoFitColumns();
+                worksheet.Cells[sRango].Style.HorizontalAlignment = ExcelHorizontalAlignment.General;
+                worksheet.Cells[sRango].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                //worksheet.Cells[sRango].Style.WrapText = true;
+
+                xlPackage.Workbook.Properties.Title = "Data Relevante";
+                xlPackage.Workbook.Properties.Author = "Israel Lozano del Castillo danielitolozano85@gmail.com";
+                xlPackage.Workbook.Properties.Subject = "Data Relevante Empresarial";
+                xlPackage.Save();
+                // Response.Clear();
+            }
+            stream.Position = 0;
+            return stream;
+        }
+
+
+        public async Task<MemoryStream> GetExcelSocioAsync(string codUbigeo)
+        {
+
+            var data = _comiteUnitOfWork
+                ._socioReposiroty
+                .GetAll(includeProperties: "iCodComVasLecheNavigation,iTipSocioNavigation,iCodPersonaNavigation.iTipDocumentoNavigation");
+
+            //var ubigeos = data.Select(s => s.iIdComiteNavigation.vUbigeo).Distinct().ToList();
+            //var listUbigeos = await _maestraManager.getDistritoFull(ubigeos);
+            //data.ForEach(u =>
+            //{
+            //    var fullUbigeo = listUbigeos.FirstOrDefault(l => l.codigo == u.iIdComiteNavigation.vUbigeo);
+            //    u.dpto = fullUbigeo.dpto;
+            //    u.provincia = fullUbigeo.provincia;
+            //    u.distrito = fullUbigeo.descripcion;
+            //});
+
+            var stream = new MemoryStream();
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var xlPackage = new ExcelPackage(stream))
+            {
+                var worksheet = xlPackage.Workbook.Worksheets.Add("COMITE ADMIN");
+                var namedStyle = xlPackage.Workbook.Styles.CreateNamedStyle("HyperLink");
+                namedStyle.Style.Font.UnderLine = true;
+                namedStyle.Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                const int startRow = 5;
+                var row = startRow;
+                worksheet.View.ShowGridLines = false;
+
+                worksheet.Cells["A1"].Value = "LISTADO SOCIOS DE JUNTA DIRECTIVA";
+                using (var r = worksheet.Cells["A1:O1"])
+                {
+                    r.Merge = true;
+                    r.Style.Font.Color.SetColor(System.Drawing.Color.White);
+                    r.Style.Font.Size = 15;
+                    r.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous;
+                    r.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    r.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(23, 55, 93));
+                }
+
+                worksheet.Cells["A4"].Value = "Codigo";
+                worksheet.Cells["B4"].Value = "Nombre Comite";
+                worksheet.Cells["C4"].Value = "Tipo Socio";
+                worksheet.Cells["D4"].Value = "Tipo Doc";
+                worksheet.Cells["E4"].Value = "Nro Doc";
+                worksheet.Cells["F4"].Value = "Ape. Paterno";
+                worksheet.Cells["G4"].Value = "Ape. Materno";
+                worksheet.Cells["H4"].Value = "Nombres";
+                worksheet.Cells["I4"].Value = "Celular";
+                worksheet.Cells["J4"].Value = "Tel. Fijo";
+                worksheet.Cells["K4"].Value = "Gestante";
+                worksheet.Cells["L4"].Value = "Discapacitado";
+                worksheet.Cells["M4"].Value = "Nro Sem Gestacion";
+                worksheet.Cells["N4"].Value = "Fecha Parto";
+                worksheet.Cells["O4"].Value = "Fecha Termino Lactancia";
+                worksheet.Cells["A4:O4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:O4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(184, 204, 228));
+                worksheet.Cells["A4:O4"].Style.Font.Bold = true;
+
+                row = 5;
+
+                foreach (var item in data)
+                {
+                    worksheet.Cells[row, 1].Value = item.iIdSocio;
+                    worksheet.Cells[row, 2].Value = item.iCodComVasLecheNavigation.vNomComite;
+                    worksheet.Cells[row, 3].Value = item.iTipSocioNavigation.vDescripcion;
+                    worksheet.Cells[row, 4].Value = item.iCodPersonaNavigation.iTipDocumentoNavigation.vDescripcion;
+                    worksheet.Cells[row, 5].Value = item.iCodPersonaNavigation.vNroDocumento;
+                    worksheet.Cells[row, 6].Value = item.iCodPersonaNavigation.vApePaterno;
+                    worksheet.Cells[row, 7].Value = item.iCodPersonaNavigation.vApeMaterno;
+                    worksheet.Cells[row, 8].Value = item.iCodPersonaNavigation.vNombre;
+                    worksheet.Cells[row, 9].Value = item.iCodPersonaNavigation.vCelular;
+                    worksheet.Cells[row, 10].Value = item.iCodPersonaNavigation.vTelFijo;
+                    worksheet.Cells[row, 11].Value = item.bGestante.Value ? "SI" : "NO";
+                    worksheet.Cells[row, 12].Value = item.bDiscapacitado.Value ? "SI" : "NO";
+                    worksheet.Cells[row, 13].Value = item.iNumSemGestacion.HasValue ? item.iNumSemGestacion.Value : 0;
+                    worksheet.Cells[row, 14].Value = item.dFecParto.HasValue ? item.dFecParto.Value.ToShortDateString() : "";
+                    worksheet.Cells[row, 15].Value = item.dFecTermLactancia.HasValue ? item.dFecTermLactancia.Value.ToShortDateString() : "";
+                    row++;
+                }
+
+                var sRango = "A4:O" + (row - 1).ToString();
+                worksheet.Cells[sRango].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+
+                worksheet.Cells[sRango].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[sRango].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[sRango].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[sRango].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
+                worksheet.Cells[sRango].AutoFitColumns();
+                worksheet.Cells[sRango].Style.HorizontalAlignment = ExcelHorizontalAlignment.General;
+                worksheet.Cells[sRango].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                //worksheet.Cells[sRango].Style.WrapText = true;
+
+                xlPackage.Workbook.Properties.Title = "Data Relevante";
+                xlPackage.Workbook.Properties.Author = "Israel Lozano del Castillo danielitolozano85@gmail.com";
+                xlPackage.Workbook.Properties.Subject = "Data Relevante Empresarial";
+                xlPackage.Save();
+                // Response.Clear();
+            }
+            stream.Position = 0;
+            return stream;
+        }
+
+
+        public async Task<MemoryStream> GetExcelUsuariosAsync(string codUbigeo)
+        {
+
+            var data = _comiteUnitOfWork
+                ._usuarioRepository
+                .GetAll(
+                includeProperties: "iCodComVasLecheNavigation,iIdSocioNavigation.iCodPersonaNavigation.iTipDocumentoNavigation," +
+                "iClasificacionNavigation,iCodPersonaNavigation.iTipDocumentoNavigation");
+
+            //var ubigeos = data.Select(s => s.iIdComiteNavigation.vUbigeo).Distinct().ToList();
+            //var listUbigeos = await _maestraManager.getDistritoFull(ubigeos);
+            //data.ForEach(u =>
+            //{
+            //    var fullUbigeo = listUbigeos.FirstOrDefault(l => l.codigo == u.iIdComiteNavigation.vUbigeo);
+            //    u.dpto = fullUbigeo.dpto;
+            //    u.provincia = fullUbigeo.provincia;
+            //    u.distrito = fullUbigeo.descripcion;
+            //});
+
+            var stream = new MemoryStream();
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var xlPackage = new ExcelPackage(stream))
+            {
+                var worksheet = xlPackage.Workbook.Worksheets.Add("COMITE ADMIN");
+                var namedStyle = xlPackage.Workbook.Styles.CreateNamedStyle("HyperLink");
+                namedStyle.Style.Font.UnderLine = true;
+                namedStyle.Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                const int startRow = 5;
+                var row = startRow;
+                worksheet.View.ShowGridLines = false;
+
+                worksheet.Cells["A1"].Value = "LISTADO BENEFICIARIOS DE JUNTA DIRECTIVA";
+                using (var r = worksheet.Cells["A1:O1"])
+                {
+                    r.Merge = true;
+                    r.Style.Font.Color.SetColor(System.Drawing.Color.White);
+                    r.Style.Font.Size = 15;
+                    r.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous;
+                    r.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    r.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(23, 55, 93));
+                }
+
+                worksheet.Cells["A4"].Value = "Codigo";
+                worksheet.Cells["B4"].Value = "Nombre Comite";
+                worksheet.Cells["C4"].Value = "Tipo Prioridad";
+                worksheet.Cells["D4"].Value = "Tipo Doc";
+                worksheet.Cells["E4"].Value = "Nro Doc";
+                worksheet.Cells["F4"].Value = "Ape. Paterno";
+                worksheet.Cells["G4"].Value = "Ape. Materno";
+                worksheet.Cells["H4"].Value = "Nombres";
+                worksheet.Cells["I4"].Value = "Celular";
+                worksheet.Cells["J4"].Value = "Tel. Fijo";
+                worksheet.Cells["K4"].Value = "Gestante";
+                worksheet.Cells["L4"].Value = "Discapacitado";
+                worksheet.Cells["M4"].Value = "Nro Sem Gestacion";
+                worksheet.Cells["N4"].Value = "Fecha Parto";
+                worksheet.Cells["O4"].Value = "Fecha Termino Lactancia";
+                worksheet.Cells["P4"].Value = "Pasciente TBC";
+                worksheet.Cells["A4:O4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:O4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(184, 204, 228));
+                worksheet.Cells["A4:O4"].Style.Font.Bold = true;
+
+                row = 5;
+
+                foreach (var item in data)
+                {
+                    worksheet.Cells[row, 1].Value = item.iIdSocio;
+                    worksheet.Cells[row, 2].Value = item.iCodComVasLecheNavigation.vNomComite;
+                    worksheet.Cells[row, 3].Value = item.iClasificacionNavigation.vDescripcion;
+                    worksheet.Cells[row, 4].Value = item.iCodPersonaNavigation.iTipDocumentoNavigation.vDescripcion;
+                    worksheet.Cells[row, 5].Value = item.iCodPersonaNavigation.vNroDocumento;
+                    worksheet.Cells[row, 6].Value = item.iCodPersonaNavigation.vApePaterno;
+                    worksheet.Cells[row, 7].Value = item.iCodPersonaNavigation.vApeMaterno;
+                    worksheet.Cells[row, 8].Value = item.iCodPersonaNavigation.vNombre;
+                    worksheet.Cells[row, 9].Value = item.iCodPersonaNavigation.vCelular;
+                    worksheet.Cells[row, 10].Value = item.iCodPersonaNavigation.vTelFijo;
+                    worksheet.Cells[row, 11].Value = item.bGestante.Value ? "SI" : "NO";
+                    worksheet.Cells[row, 12].Value = item.bDiscapacitado.Value ? "SI" : "NO";
+                    worksheet.Cells[row, 13].Value = item.iNumSemGestacion.HasValue ? item.iNumSemGestacion.Value : 0;
+                    worksheet.Cells[row, 14].Value = item.dFecParto.HasValue ? item.dFecParto.Value.ToShortDateString() : "";
+                    worksheet.Cells[row, 15].Value = item.dFecTermLactancia.HasValue ? item.dFecTermLactancia.Value.ToShortDateString() : "";
+                    worksheet.Cells[row, 16].Value = item.bPacTBC.Value ? "SI" : "NO";
+                    row++;
+                }
+
+                var sRango = "A4:O" + (row - 1).ToString();
+                worksheet.Cells[sRango].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+
+                worksheet.Cells[sRango].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[sRango].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[sRango].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[sRango].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
+                worksheet.Cells[sRango].AutoFitColumns();
+                worksheet.Cells[sRango].Style.HorizontalAlignment = ExcelHorizontalAlignment.General;
+                worksheet.Cells[sRango].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                //worksheet.Cells[sRango].Style.WrapText = true;
+
+                xlPackage.Workbook.Properties.Title = "Data Relevante";
+                xlPackage.Workbook.Properties.Author = "Israel Lozano del Castillo danielitolozano85@gmail.com";
+                xlPackage.Workbook.Properties.Subject = "Data Relevante Empresarial";
+                xlPackage.Save();
+                // Response.Clear();
+            }
+            stream.Position = 0;
+            return stream;
+        }
+        #endregion
 
     }
 }

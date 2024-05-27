@@ -7,11 +7,18 @@ namespace MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd
         public int iIdSocio { get; set; }
         public int iCodPersona { get; set; }
         public int iCodComVasLeche { get; set; }
+        [Display(Name = "Tipo Socio")]
+        [Required(ErrorMessage = "El Campo Tipo Socio es obligatorio")]
         public int iTipSocio { get; set; }
+        [Display(Name = "Es Gestante?")]
         public bool bGestante { get; set; }
+        [Display(Name = "Es Discapacitado?")]
         public bool bDiscapacitado { get; set; }
+        [Display(Name = "Nro. Sem. Gestacion")]
         public int? iNumSemGestacion { get; set; }
+        [Display(Name = "Fecha de Parto")]
         public DateTime? dFecParto { get; set; }
+        [Display(Name = "Termino Lactancia")]
         public DateTime? dFecTermLactancia { get; set; }
         public bool bActivo { get; set; }
         

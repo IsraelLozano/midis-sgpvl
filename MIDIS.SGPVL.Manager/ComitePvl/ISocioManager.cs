@@ -9,5 +9,6 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
         Task<bool> DeleteSocioAsync(int id);
         Task<CmdSocioDto> GetSocioByIdAsync(int id);
         Task<List<GetSocioDto>> GetListSocioByComiteAsync(int idComite);
+        Task<List<GetSocioDto>> GetListSocioByUbigeo(string idUbigeo);
     }
 }
