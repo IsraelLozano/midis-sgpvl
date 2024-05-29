@@ -54,6 +54,11 @@ var recursos = configuration.GetSection("ResourceDto").Get<ResourceDto>(opt => o
 builder.Services.AddSingleton(recursos);
 /*------------------------------------------------------------*/
 
+//Configuracion ruta de los Servicio de Agents External-------------------------------------/
+var urlServices = configuration.GetSection("UrlServiceAgent").Get<UrlServiceAgent>(opt => opt.BindNonPublicProperties = true);
+builder.Services.AddSingleton(urlServices);
+/*------------------------------------------------------------*/
+
 //Configuracion para el BackEnd-------------------------------------/
 BackEndConfig backEndConfig = configuration.GetSection("BackEndConfig").Get<BackEndConfig>();
 
