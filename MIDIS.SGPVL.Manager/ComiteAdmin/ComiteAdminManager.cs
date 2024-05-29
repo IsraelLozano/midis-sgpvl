@@ -298,14 +298,14 @@ namespace MIDIS.SGPVL.Manager.ComiteAdmin
                     worksheet.Cells[row, 2].Value = item.vUbigeo;
                     worksheet.Cells[row, 3].Value = item.ubigeoFull.Split("/")[0];
                     worksheet.Cells[row, 4].Value = item.ubigeoFull.Split("/")[1];
-                    worksheet.Cells[row, 1].Value = item.ubigeoFull.Split("/")[2];
-                    worksheet.Cells[row, 2].Value = item.iTipResolucionNavigation.descripcion;
-                    worksheet.Cells[row, 3].Value = item.vNumResolucion;
-                    worksheet.Cells[row, 4].Value = item.dFecEmision.ToShortDateString();
-                    worksheet.Cells[row, 5].Value = item.dFecInicio.ToShortDateString();
-                    worksheet.Cells[row, 6].Value = item.dFecFin.ToShortDateString();
-                    worksheet.Cells[row, 7].Value = item.bVigente.Value ? "SI" : "NO";
-                    worksheet.Cells[row, 8].Value = item.VLAdmMiembros.Count();
+                    worksheet.Cells[row, 5].Value = item.ubigeoFull.Split("/")[2];
+                    worksheet.Cells[row, 6].Value = item.iTipResolucionNavigation.descripcion;
+                    worksheet.Cells[row, 7].Value = item.vNumResolucion;
+                    worksheet.Cells[row, 8].Value = item.dFecEmision.ToShortDateString();
+                    worksheet.Cells[row, 8].Value = item.dFecInicio.ToShortDateString();
+                    worksheet.Cells[row, 10].Value = item.dFecFin.ToShortDateString();
+                    worksheet.Cells[row, 11].Value = item.bVigente.Value ? "SI" : "NO";
+                    worksheet.Cells[row, 12].Value = item.VLAdmMiembros.Count();
                     row++;
                 }
 

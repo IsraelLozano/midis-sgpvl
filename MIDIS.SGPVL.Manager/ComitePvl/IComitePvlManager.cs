@@ -10,6 +10,7 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
         Task<CmdComiteDto> GetComiteByIdAsync(int id);
         Task<GetComiteParams> GetComiteFilters(string filter);
         Task<List<GetComiteDto>> GetComiteList(GetComiteParams param);
+        Task<MemoryStream> GetExcelComitePvlAsync(string codUbigeo);
         Task<MemoryStream> GetExcelJuntaDirectivaAsync(string codUbigeo);
         Task<MemoryStream> GetExcelSocioAsync(string codUbigeo);
         Task<MemoryStream> GetExcelUsuariosAsync(string codUbigeo);

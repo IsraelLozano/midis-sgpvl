@@ -9,6 +9,8 @@ using Newtonsoft.Json.Serialization;
 using System.Globalization;
 using System.Reflection;
 using MIDIS.SGPVL.Utils.Helpers.FileManager;
+using Serilog.Events;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -80,7 +82,18 @@ builder.Services.AddSession(
 
 //Filters
 builder.Services.AddScoped<ModelValidationAttribute>();
+//Seri Log - Config -------------------------------------------/
+var logger = new LoggerConfiguration()
+                //.ReadFrom.Configuration(configuration.GetSection("Logging"))
+    .WriteTo.File("SGPVL.txt", rollingInterval: RollingInterval.Day)
+    //.MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+    .CreateLogger();
 
+builder.Host.UseSerilog(logger).ConfigureLogging(opt =>
+{
+    opt.ClearProviders();
+    opt.SetMinimumLevel(LogLevel.Trace);
+});
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -92,6 +105,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
+app.UseSerilogRequestLogging();
 app.UseStaticFiles();
 
 app.UseRouting();

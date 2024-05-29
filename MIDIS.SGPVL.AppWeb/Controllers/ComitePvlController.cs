@@ -51,10 +51,20 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var vm = new GetComiteParams();
-            var _listDpto = await _maestrasManager.GetAllDptoAsync();
-            ViewBag.dpto = new SelectList(_listDpto, nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.idDptoSelect);
-            return View(vm);
+            try
+            {
+                var vm = new GetComiteParams();
+                _logger.LogInformation("Ingresando a ===> GetAllDptoAsync()");
+                var _listDpto = await _maestrasManager.GetAllDptoAsync();
+                ViewBag.dpto = new SelectList(_listDpto, nameof(GetEnumeradoComboDto.id), nameof(GetEnumeradoComboDto.descripcion), vm.idDptoSelect);
+                _logger.LogInformation("Iniciando la pagina Index de (ComitePvl)");
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                throw ex;
+            }
         }
 
         [HttpPost]
@@ -315,7 +325,7 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
                 id = l.iIdSocio,
                 fullName = l.nombreFull()
             });
-            ViewBag.listSocios = new SelectList(socios,"id" , "fullName", vm.iIdSocio);
+            ViewBag.listSocios = new SelectList(socios, "id", "fullName", vm.iIdSocio);
 
             await getComboBeneficiarioAsync(vm);
             return PartialView("_addBeneficiarioJuntaDirectiva", vm);
@@ -382,7 +392,7 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
                 throw ex;
             }
         }
-        
+
         [HttpGet, DisableRequestSizeLimit]
         [Route("ComitePvl/GetExcelSociosAsync/{codUbigeo}")]
         public async Task<IActionResult> GetExcelSociosAsync(string codUbigeo)
@@ -400,7 +410,7 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
                 throw ex;
             }
         }
-        
+
         [HttpGet, DisableRequestSizeLimit]
         [Route("ComitePvl/GetExcelBeneficiariosAsync/{codUbigeo}")]
         public async Task<IActionResult> GetExcelBeneficiariosAsync(string codUbigeo)
@@ -418,8 +428,26 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
                 throw ex;
             }
         }
+        
+        [HttpGet, DisableRequestSizeLimit]
+        [Route("ComitePvl/GetExcelComitePvlAsync/{codUbigeo}")]
+        public async Task<IActionResult> GetExcelComitePvlAsync(string codUbigeo)
+        {
+            try
+            {
+                var query = await _comitePvlManager.GetExcelComitePvlAsync(codUbigeo);
+                var fileName = string.Format("GetExcelComitePvlAsync{0}.xlsx", DateTime.Now.ToString("yyyy_MM_dd_hh_mm"));
 
-       
+                return File(query, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+                throw ex;
+            }
+        }
+
+
 
         #endregion
 

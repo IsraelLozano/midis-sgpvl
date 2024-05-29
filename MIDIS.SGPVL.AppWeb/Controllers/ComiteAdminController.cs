@@ -39,10 +39,21 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var combos = await _comiteAdminManager.GetAdministrativoFilters("");
-
-            ViewBag.dptos = combos.dptos;
-            return View();
+            try
+            {
+                _logger.LogInformation("Ingresando a ===> GetAdministrativoFilters()");
+                var combos = await _comiteAdminManager.GetAdministrativoFilters("");
+                _logger.LogInformation("Iniciando la pagina Index de (ComiteAdminController)");
+                ViewBag.dptos = combos.dptos;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                _logger.LogInformation(ex.Message, ex);
+                throw ex;
+            }
+            
         }
 
         [HttpPost]

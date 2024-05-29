@@ -6,10 +6,8 @@ using MIDIS.SGPVL.ManagerDto.ComitePvl.Cmd;
 using MIDIS.SGPVL.ManagerDto.ComitePvl.Get;
 using MIDIS.SGPVL.ManagerDto.Maestro.Get;
 using MIDIS.SGPVL.Repository.UnitOfWork;
-using OfficeOpenXml.Style;
 using OfficeOpenXml;
-using Azure;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using OfficeOpenXml.Style;
 
 namespace MIDIS.SGPVL.Manager.ComitePvl
 {
@@ -463,6 +461,120 @@ namespace MIDIS.SGPVL.Manager.ComitePvl
             stream.Position = 0;
             return stream;
         }
+
+        public async Task<MemoryStream> GetExcelComitePvlAsync(string codUbigeo)
+        {
+
+            var data = _comiteUnitOfWork
+                ._comitePVLRepository
+                .GetAll(includeProperties: "iTipAlimentoNavigation,iTipOsbNavigation,VLJunDirectivas.iTipResolucionNavigation,VLJunDirectivas.VLMiembroJunta.iCodPersonaNavigation.iTipDocumentoNavigation,VLJunDirectivas.VLMiembroJunta.iTipCargoNavigation");
+
+
+            var ubigeos = data.Select(s => s.vUbigeo).Distinct().ToList();
+            var codCentPoblados = data.Select(s => s.vCodCentPoblado).Distinct().ToList();
+
+            var listUbigeos = await _maestraManager.getDistritoFull(ubigeos);
+            var listCentroPoblados = await _maestraManager.getCentroPobladoFull(codCentPoblados);
+
+            var response = _mapper.Map<List<GetComiteDto>>(data);
+
+            response.ForEach(u =>
+            {
+                var fullUbigeo = listUbigeos.FirstOrDefault(l => l.codigo == u.vUbigeo);
+                u.ubigeoFull = fullUbigeo.full();
+                u.centroPobladoFull = listCentroPoblados.FirstOrDefault(l => l.codigo == u.vCodCentPoblado).descripcion;
+                var presidente = u.VLJunDirectivas.Where(l => l.VLMiembroJunta.Any(s => s.iTipCargo == 79)).Select(p => p.VLMiembroJunta.Select(o => o.iCodPersonaNavigation)).FirstOrDefault();
+                var estActivo = u.VLJunDirectivas.Where(l => l.VLMiembroJunta.Any(s => s.iTipCargo == 79)).Select(p => p.VLMiembroJunta).FirstOrDefault();
+                if (presidente != null)
+                {
+                    u.nombrePresidente = $"{presidente.First().vApePaterno} {presidente.First().vApeMaterno}, {presidente.First().vNombre}";
+                    u.nroDocumento = $"{presidente.First().iTipDocumentoNavigation.descripcion}: {presidente.First().vNroDocumento}";
+                    u.estado = estActivo.FirstOrDefault().bActivo.Value;
+                }
+
+            });
+
+            var stream = new MemoryStream();
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (var xlPackage = new ExcelPackage(stream))
+            {
+                var worksheet = xlPackage.Workbook.Worksheets.Add("COMITE ADMIN");
+                var namedStyle = xlPackage.Workbook.Styles.CreateNamedStyle("HyperLink");
+                namedStyle.Style.Font.UnderLine = true;
+                namedStyle.Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                const int startRow = 5;
+                var row = startRow;
+                worksheet.View.ShowGridLines = false;
+
+                worksheet.Cells["A1"].Value = "LISTADO DE COMITES DEL PROGRAMA DE VASO DE LECHE";
+                using (var r = worksheet.Cells["A1:K1"])
+                {
+                    r.Merge = true;
+                    r.Style.Font.Color.SetColor(System.Drawing.Color.White);
+                    r.Style.Font.Size = 15;
+                    r.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous;
+                    r.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    r.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(23, 55, 93));
+                }
+
+                worksheet.Cells["A4"].Value = "Id";
+                worksheet.Cells["B4"].Value = "Tipo OSB";
+                worksheet.Cells["C4"].Value = "Tipo Alimento";
+                worksheet.Cells["D4"].Value = "Codigo";
+                worksheet.Cells["E4"].Value = "Ubigeo";
+                worksheet.Cells["F4"].Value = "Dpto / Provincia / Distrito";
+                worksheet.Cells["G4"].Value = "Centro Poblado";
+                worksheet.Cells["H4"].Value = "Nombre del Comite";
+                worksheet.Cells["I4"].Value = "Estado";
+                worksheet.Cells["J4"].Value = "Nro Socios";
+                worksheet.Cells["K4"].Value = "Nro Usuario";
+                worksheet.Cells["A4:K4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:K4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(184, 204, 228));
+                worksheet.Cells["A4:K4"].Style.Font.Bold = true;
+
+                row = 5;
+
+                foreach (var item in response)
+                {
+                    worksheet.Cells[row, 1].Value = item.iCodComVasLeche;
+                    worksheet.Cells[row, 2].Value = item.iTipOsbNavigation.descripcion;
+                    worksheet.Cells[row, 3].Value = item.iTipAlimentoNavigation.descripcion;
+                    worksheet.Cells[row, 4].Value = item.vCodComite;
+                    worksheet.Cells[row, 5].Value = item.vUbigeo;
+                    worksheet.Cells[row, 6].Value = item.ubigeoFull;
+                    worksheet.Cells[row, 7].Value = item.centroPobladoFull;
+                    worksheet.Cells[row, 8].Value = item.vNomComite;
+                    worksheet.Cells[row, 9].Value = item.bActivo.Value ? "SI" : "NO";
+                    worksheet.Cells[row, 10].Value = item.iNumSocio;
+                    worksheet.Cells[row, 11].Value = item.iNumUsuario;
+                    row++;
+                }
+
+                var sRango = "A4:K" + (row - 1).ToString();
+                worksheet.Cells[sRango].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+
+                worksheet.Cells[sRango].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[sRango].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[sRango].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[sRango].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
+                worksheet.Cells[sRango].AutoFitColumns();
+                worksheet.Cells[sRango].Style.HorizontalAlignment = ExcelHorizontalAlignment.General;
+                worksheet.Cells[sRango].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                //worksheet.Cells[sRango].Style.WrapText = true;
+
+                xlPackage.Workbook.Properties.Title = "Data Relevante";
+                xlPackage.Workbook.Properties.Author = "Israel Lozano del Castillo danielitolozano85@gmail.com";
+                xlPackage.Workbook.Properties.Subject = "Data Relevante Empresarial";
+                xlPackage.Save();
+                // Response.Clear();
+            }
+            stream.Position = 0;
+            return stream;
+        }
+
+
+
         #endregion
 
     }

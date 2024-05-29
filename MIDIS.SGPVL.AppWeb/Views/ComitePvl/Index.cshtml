@@ -114,6 +114,7 @@
                                             <span class="sr-only">Toggle Dropdown</span>
                                         </button>
                                         <div class="dropdown-menu">
+                                            <button class="dropdown-item" id="btnExportarComitePvl" data-url="@Url.Action("GetExcelComitePvlAsync")">Comite PVL</button>
                                             <button class="dropdown-item" id="btnExportarJuntaDirectiva" data-url="@Url.Action("GetExcelJuntaDirectivaAsync")">Junta Directiva</button>
                                             <button class="dropdown-item" id="btnExportarJuntaDirectiva2" data-url="@Url.Action("GetExcelSociosAsync")">Socios</button>
                                             <button class="dropdown-item" id="btnExportarJuntaDirectiva3" data-url="@Url.Action("GetExcelBeneficiariosAsync")">Beneficiarios</button>
@@ -483,6 +484,39 @@
             });
 
             $('#btnExportarJuntaDirectiva3').click(function () {
+                var datos = {
+                    idDptoSelect: $("#idDptoSelect").val(),
+                    idProvSelect: $("#idProvSelect").val(),
+                    idUbigeoSelect: $("#idUbigeo").val(),
+                };
+
+                if (datos.idDptoSelect === '') {
+                    Swal.fire(
+                        {
+                            title: "Aviso",
+                            text: "Debe seleccionar al menos un filtro de busqueda.",
+                            icon: "warning",
+                        });
+                    return;
+                }
+                var codigo = '';
+
+                if ($("#idProvSelect").val() == '' || $("#idProvSelect").val() == null) {
+                    codigo = datos.idDptoSelect;
+                } else {
+                    if ($("#idUbigeo").val() == '' || $("#idUbigeo").val() == null) {
+                        codigo = datos.idDptoSelect.concat(datos.idProvSelect)
+                    } else {
+                        codigo = datos.idUbigeoSelect
+                    }
+                }
+
+                var url = $(this).data('url') + "/" + codigo
+
+                window.location = url;
+            });
+
+            $('#btnExportarComitePvl').click(function () {
                 var datos = {
                     idDptoSelect: $("#idDptoSelect").val(),
                     idProvSelect: $("#idProvSelect").val(),
