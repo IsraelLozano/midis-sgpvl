@@ -1,13 +1,15 @@
 ﻿@model CmdComiteMemberAdminDto;
 
 @{
-    var template = $"{Model.tipoResolucionTexto} - DISTRITO: {Model.UbigeoCompletoFull}";
+    var templateHtml = "<span class='text-info fs-lg fw-500'>{0}</span><br><span class='text-info fs-lg fw-500'>UBIGEO:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{1}</span>";
+    var template = string.Format(templateHtml, Model.tipoResolucionTexto, Model.UbigeoCompletoFull); //$"{Model.tipoResolucionTexto} - DISTRITO: {Model.UbigeoCompletoFull}";
 }
 @* <link href="~/asset/css/fa-brands.css" rel="stylesheet" /> *@
 
 <div class="modal-content">
+    
     <div class="modal-header" style="background-color:#F0F3FA;border-bottom: 1px solid #E2E6EE;">
-        <h5 class="modal-title">Registrar Miembro</h5>
+        <h5 class="modal-title fw-500">Registrar Miembro</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"><i class="fal fa-times"></i></span>
         </button>
@@ -18,7 +20,7 @@
             <input type="hidden" id="codComiteFK" value="@Model.iIdComite" />
             <div class="panel-content">
                 <div class="form-row form-group">
-                    <span class="text-info fs-lg fw-500">@template</span>
+                    <span class="text-info fs-lg fw-500">@Html.Raw(template)</span>
                 </div>
                 <div class="form-row form-group">
                     <div class="col-md-4 mb-2">
@@ -113,6 +115,18 @@
 
         $("#btnGrabarMember").click(function (e) {
             e.preventDefault();
+
+            let idcargo = $("#iTipCargo").val()
+            let txtCargoSelect = $("#iTipCargo option:selected").text()
+            if (membersList.filter(l => l.iTipCargo == idcargo).length > 0) {
+                Swal.fire({
+                    title: `<h4>El cargo seleccionado: <span class="fw-700"> ` + txtCargoSelect + `  </span> ya encuentra se registrado, seleccione otro cargo </h4>`,
+                    icon: "warning",
+                    target: document.getElementById('modal-members')
+                });
+                return;
+            }
+
             Swal.fire(
                 {
                     title: "Confirmacion",
@@ -161,6 +175,7 @@
                     }
                 });
         });
+
     })
 
 </script>

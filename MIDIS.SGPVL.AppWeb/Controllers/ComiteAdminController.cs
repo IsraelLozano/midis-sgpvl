@@ -151,7 +151,7 @@ namespace MIDIS.SGPVL.AppWeb.Controllers
             var infoAdicional = await _comiteAdminManager.GetAdministrativoByIdAsync(idComite);
             await getComboMemberAsync(vm);
             vm.iIdComite = idComite;
-            vm.tipoResolucionTexto = $"{infoAdicional.tipoResolucionText}: {infoAdicional.vNumResolucion}";
+            vm.tipoResolucionTexto = infoAdicional.tipoResolucionText;
             vm.UbigeoCompletoFull = infoAdicional.ubigeoFull;
             return PartialView("_addMemberAdmin", vm);
         }

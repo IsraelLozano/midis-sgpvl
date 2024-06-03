@@ -29,6 +29,8 @@
         LM = 2,
         brevete = 3,
         ruc = 4,
+        pasaporte = 7,
+        ce= 11
     }
 
     public enum EnumEstadoCivil

@@ -14,13 +14,13 @@ namespace MIDIS.SGPVL.ManagerDto.ComiteAdmin.Cmd
         public string vNumResolucion { get; set; }
         [Required(ErrorMessage = "Campo Fecha Emision obligatorio")]
         [Display(Name = "Fecha Emision")]
-        public DateTime dFecEmision { get; set; }
+        public DateTime? dFecEmision { get; set; }
         [Required(ErrorMessage = "Campo Fecha Inicio obligatorio")]
         [Display(Name = "Fecha Inicio")]
-        public DateTime dFecInicio { get; set; }
+        public DateTime? dFecInicio { get; set; }
         [Required(ErrorMessage = "Campo Fecha Fin obligatorio")]
         [Display(Name = "Fecha Fin")]
-        public DateTime dFecFin { get; set; }
+        public DateTime? dFecFin { get; set; }
 
 
         [Display(Name = "Observacion")]

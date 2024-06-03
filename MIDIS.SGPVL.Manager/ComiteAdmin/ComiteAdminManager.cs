@@ -103,7 +103,7 @@ namespace MIDIS.SGPVL.Manager.ComiteAdmin
             var listUbigeos = await _maestraManager.getDistritoFull(ubigeos);
             var response = _mapper.Map<CmdComiteAdminDto>(query.FirstOrDefault());
             response.ubigeoFull = listUbigeos.FirstOrDefault().full();
-            response.tipoResolucionText = listUbigeos.FirstOrDefault().full();
+            response.tipoResolucionText = $"{query.FirstOrDefault().iTipResolucionNavigation.vDescripcion}: {response.vNumResolucion}";
             return response;
 
 
@@ -120,7 +120,7 @@ namespace MIDIS.SGPVL.Manager.ComiteAdmin
                 {
                     entidad.dFecRegistro = entidad.dFecModifica = DateTime.Now;
                     entidad.vUsuRegistro = entidad.vUsuModifica = _aplicationConstants.UsuarioSesionBE.Credenciales;
-                    entidad.bVigente = true;
+                    entidad.bVigente = false;
                     entidad.vNomArcGuid = Path.Combine(rutaCarpeta, fileNameSave);
                     entidad.iNumMiembro = 0;
                     //Guid.NewGuid().ToString();
@@ -139,6 +139,7 @@ namespace MIDIS.SGPVL.Manager.ComiteAdmin
                 {
                     var pathToSave = Path.Combine(_resourceDto.Documents, rutaCarpeta);
                     await _storageManager.SaveFileFormCollection(pathToSave, fileNameSave, model.FileResol);
+                    //await addMemberDefaults(entidad.iIdComite);
                 }
 
                 return _mapper.Map<CmdComiteAdminDto>(entidad);
@@ -149,6 +150,17 @@ namespace MIDIS.SGPVL.Manager.ComiteAdmin
             }
 
         }
+
+        //private async Task addMemberDefaults(int iIdComite)
+        //{
+        //    List<EnumeradoCabecera> listaMaestra = new List<EnumeradoCabecera>();
+        //    listaMaestra.Add(EnumeradoCabecera.TIPO_CARGOS);
+
+        //    var combos = await _maestraManager.GetListEnumeradoByGrupo(listaMaestra);
+        //    var cargos= combos[EnumeradoCabecera.TIPO_CARGOS].ToList();
+
+        //    var listMembers = cargos.Select(l=> new )
+        //}
 
         #region Comite-Miembro
 
@@ -192,7 +204,11 @@ namespace MIDIS.SGPVL.Manager.ComiteAdmin
                 //Actualizar nro Miembros 
                 var comite = _administrativoUnitOfWork._comiteAdminRepository.GetById(model.iIdComite);
 
-                comite.iNumMiembro = _administrativoUnitOfWork._comiteAdminMiembroRepository.GetAll(l => l.iIdComite == model.iIdComite).Count;
+                int nroActivo = _administrativoUnitOfWork._comiteAdminMiembroRepository.GetAll(l => l.iIdComite == model.iIdComite && l.bActivo.Value).Count;
+
+                comite.iNumMiembro = nroActivo;
+
+                comite.bVigente = nroActivo >= 7;
 
                 _administrativoUnitOfWork._comiteAdminRepository.Update(comite);
 
@@ -302,7 +318,7 @@ namespace MIDIS.SGPVL.Manager.ComiteAdmin
                     worksheet.Cells[row, 6].Value = item.iTipResolucionNavigation.descripcion;
                     worksheet.Cells[row, 7].Value = item.vNumResolucion;
                     worksheet.Cells[row, 8].Value = item.dFecEmision.ToShortDateString();
-                    worksheet.Cells[row, 8].Value = item.dFecInicio.ToShortDateString();
+                    worksheet.Cells[row, 9].Value = item.dFecInicio.ToShortDateString();
                     worksheet.Cells[row, 10].Value = item.dFecFin.ToShortDateString();
                     worksheet.Cells[row, 11].Value = item.bVigente.Value ? "SI" : "NO";
                     worksheet.Cells[row, 12].Value = item.VLAdmMiembros.Count();

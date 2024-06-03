@@ -11,6 +11,7 @@ namespace MIDIS.SGPVL.ManagerDto.ComiteAdmin.Get
         public int iTipCargo { get; set; }
         public bool? bDesigResolucion { get; set; }
         public string vOtrCargo { get; set; }
+        public bool? bActivo { get; set; }
         public GetPersonaNaturalDto iCodPersonaNavigation { get; set; }
         public GetEnumeradoComboDto iTipCargoNavigation { get; set; }
     }

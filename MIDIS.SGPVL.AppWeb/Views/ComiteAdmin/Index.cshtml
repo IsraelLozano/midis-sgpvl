@@ -50,17 +50,17 @@
                     <div id="divTags">
                         <div class="mb-g">
                             <div class="row">
-                                <div class="col-sm-6 col-xl-4">
+                                <div class="col-sm-4 col-xl-4">
                                     <div class="form-group">
                                         <select asp-for="idDptoSelect" asp-items="@listDpto"><option value=""></option></select>
                                     </div>
                                 </div>
-                                <div class="col-sm-6 col-xl-4">
+                                <div class="col-sm-4 col-xl-4">
                                     <div class="form-group">
                                         <select asp-for="idProvSelect"><option value=""></option></select>
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-xl-4">
+                                <div class="col-sm-4 col-xl-4">
                                     <div class="form-group">
                                         <select asp-for="idUbigeo"><option value=""></option></select>
                                     </div>
@@ -106,7 +106,7 @@
                                             <th>Fecha Inicio</th>
                                             <th>Fecha Fin</th>
                                             <th>Vigente</th>
-                                            <th>Nro Miembros</th>
+                                            <th>Nro Miembros Activos</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -157,6 +157,7 @@
                                             <th>Designacion Resolucion</th>
                                             <th>Telef. Fijo</th>
                                             <th>Correo</th>
+                                            <th>Estado</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -186,7 +187,7 @@
     <script>
 
         //Variales
-        var idComite, rowComiteCurrent;
+        var idComite, rowComiteCurrent, membersList;
         var listDataTable = $('#dt-basic-example').DataTable({ language: { emptyTable: 'No hay registros.' } });
         var dtMembers = $('#tblMembers').DataTable({
             searching: false, paging: false, info: false, language: {
@@ -368,15 +369,15 @@
                 },
 
                 "columns": [
-                    { "data": "iIdComite", "autoWidth": true },
-                    { "data": "ubigeoFull", "autoWidth": true },
-                    { "data": "iTipResolucionNavigation.descripcion", "autoWidth": true },
-                    { "data": "vNumResolucion", "autoWidth": true, render: formatterDownLoadFile },
-                    { "data": "dFecEmision", "autoWidth": true },
-                    { "data": "dFecInicio", "autoWidth": true },
-                    { "data": "dFecFin", "autoWidth": true },
+                    { "width": "3%","data": "iIdComite", "autoWidth": true },
+                    { "width": "7%","data": "ubigeoFull", "autoWidth": true },
+                    { "width": "6%","data": "iTipResolucionNavigation.descripcion", "autoWidth": true },
+                    { "width": "2%","data": "vNumResolucion", "autoWidth": true, render: formatterDownLoadFile },
+                    { "width": "2%","data": "dFecEmision", "autoWidth": true },
+                    { "width": "2%","data": "dFecInicio", "autoWidth": true },
+                    { "width": "2%","data": "dFecFin", "autoWidth": true },
                     {
-                        "data": "bVigente", "autoWidth": true, "render": function (data, type, row) {
+                        "width": "3%","data": "bVigente", "autoWidth": true, "render": function (data, type, row) {
                             if (row.bVigente) {
                                 return '<strong class="text-info">SI</strong>';
                             } else {
@@ -384,12 +385,12 @@
                             }
                         }
                     },
-                    { "data": "iNumMiembro", "autoWidth": true },
-                    { "data": "iIdComite", "render": formatterAcciones }
+                    { "width": "2%","data": "iNumMiembro", "autoWidth": true },
+                    { "width": "5%","data": "iIdComite", "render": formatterAcciones }
                 ],
 
                 "columnDefs": [
-                    { className: "text-center", "targets": [0, 3, 4, 5, 6, 7] },
+                    { className: "text-center", "targets": [0, 3, 4, 5, 6, 7,8] },
                     { className: "text-center", "targets": [9] },
                     {
                         targets: [4, 5, 6],
@@ -410,7 +411,7 @@
         function formatterDownLoadFile(data, type, row, index) {
             var link = '@Url.Action("downloadResolucionAsync", "ComiteAdmin", new { id = "-1" })';
             link = link.replace("-1", row.iIdComite);
-            var textHtml = '<a title="Editar" href="' + link + '">' + row.vNumResolucion + '</a>';
+            var textHtml = '<a title="Descargar resolucion" href="' + link + '">' + row.vNumResolucion + '</a>';
             return textHtml;
         }
 
@@ -436,17 +437,21 @@
                 info: false,
                 data: entidad,
                 "columns": [
-                    { "autoWidth": true, "data": "iIdMiembro" },
-                    { "autoWidth": true, "data": "iTipCargoNavigation.descripcion" },
-                    { "autoWidth": true, "data": "iCodPersonaNavigation.iTipDocumentoNavigation.descripcion" },
-                    { "autoWidth": true, "data": "iCodPersonaNavigation.vNroDocumento" },
-                    { "autoWidth": true, "data": "iIdMiembro", render: formatterConcat },
-                    { "autoWidth": true, "data": "iCodPersonaNavigation.vCelular" },
-                    { "autoWidth": true, "data": "bDesigResolucion" },
-                    { "autoWidth": true, "data": "iCodPersonaNavigation.vTelFijo" },
-                    { "autoWidth": true, "data": "iCodPersonaNavigation.vEmail" },
-                    { className: "center", "data": "iIdComite", "render": formatterAccionesMembers }
-                ]
+                    { "width": "2%","autoWidth": true, "data": "iIdMiembro" },
+                    { "width": "11%","autoWidth": true, "data": "iTipCargoNavigation.descripcion" },
+                    { "width": "1%","autoWidth": true, "data": "iCodPersonaNavigation.iTipDocumentoNavigation.descripcion" },
+                    { "width": "2%","autoWidth": true, "data": "iCodPersonaNavigation.vNroDocumento" },
+                    { "width": "10%","autoWidth": true, "data": "iIdMiembro", render: formatterConcat },
+                    { "width": "3%","autoWidth": true, "data": "iCodPersonaNavigation.vCelular" },
+                    { "width": "1%", "autoWidth": true, "data": "bDesigResolucion", render: formatterStateDesignacion },
+                    { "width": "2%","autoWidth": true, "data": "iCodPersonaNavigation.vTelFijo" },
+                    { "width": "5%","autoWidth": true, "data": "iCodPersonaNavigation.vEmail" },
+                    { "width": "1%", "autoWidth": true, "data": "iIdMiembro", render: formatterStateMember },
+                    { "width": "2%","data": "iIdComite", "render": formatterAccionesMembers }
+                ], 
+                "columnDefs": [
+                    { className: "text-center", "targets": [0, 2, 3,6, 7, 9,10] },
+                ],
             });
         };
 
@@ -454,6 +459,7 @@
             changeTags(false);
             var dataSet = listDataTable.row(fila).data();
             var entidad = dataSet.VLAdmMiembros;
+            membersList = entidad;
             idComite = id;
             if (entidad.length > 0) {
                 loadDataMember(entidad);
@@ -462,8 +468,8 @@
                 dtMembers.context[0].oLanguage.sEmptyTable = "No existen registros";
                 dtMembers.clear().draw();
             }
-            var textUbigeoFull = 'Ubigeo: <span class="fw-300"><i>' + dataSet.ubigeoFull + '</i></span>'
-            var nroResolucion = 'Resolucion: <span class="fw-300"><i>' + dataSet.iTipResolucionNavigation.descripcion + '- ' + dataSet.vNumResolucion + '</i></span>'
+            var textUbigeoFull = 'Ubigeo: <span class="fw-700"><i>' + dataSet.ubigeoFull + '</i></span>'
+            var nroResolucion = 'Resolucion: <span class="fw-700"><i>' + dataSet.iTipResolucionNavigation.descripcion + '- ' + dataSet.vNumResolucion + '</i></span>'
             $("#divUbigeoFull").html(textUbigeoFull)
             $("#dicNroResol").html(nroResolucion)
             rowComiteCurrent = fila;
@@ -486,6 +492,22 @@
             var remove = edit + '<button type="button" title="Eliminar" class="btn btn-sm btn-icon btn-outline-danger rounded-circle mr-1"><i class="fal fa-times"></i></button>';
             return remove;
         }
+
+        const formatterStateMember = (data, type, row) => {
+            if (row.bActivo) {
+                return '<strong class="text-info fw-700">Si</strong>';
+            } else {
+                return '<strong class="fw-700">No</strong>';
+            }
+        };
+        
+        const formatterStateDesignacion= (data, type, row) => {
+            if (row.bDesigResolucion) {
+                return '<strong class="text-info fw-700">Si</strong>';
+            } else {
+                return '<strong class="fw-700">No</strong>';
+            }
+        };
 
         const loadUbigeo = (dpto, prov, value) => {
             $.get("@Url.Action("getDistritoByDptoProv", "Maestro")" + "/" + dpto + "/" + prov, function (data) {

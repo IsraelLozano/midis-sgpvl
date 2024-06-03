@@ -11,8 +11,8 @@ namespace MIDIS.SGPVL.ManagerDto.ComiteAdmin.Cmd
         [Required(ErrorMessage = "El Campo cargo es obligatorio")]
         public int iTipCargo { get; set; }
         public bool? bDesigResolucion { get; set; }
-        public string? vOtrCargo { get; set; }
         public bool? bActivo { get; set; }
+        public string? vOtrCargo { get; set; }
 
         #region Datos-Persona
         [Display(Name = "Ape. Paterno")]
