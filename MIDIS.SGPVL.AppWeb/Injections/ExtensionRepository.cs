@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using MIDIS.SGPVL.Contexto.Data;
+using MIDIS.SGPVL.Manager.AgenteExterno;
 using MIDIS.SGPVL.Manager.ComiteAdmin;
 using MIDIS.SGPVL.Manager.ComitePvl;
 using MIDIS.SGPVL.Manager.Maestro;
@@ -89,6 +90,7 @@ namespace MIDIS.SGPVL.AppWeb.Injections
             services.AddScoped<IJuntaDirectivaManager, JuntaDirectivaManager>();
             services.AddScoped<ISocioManager, SocioManager>();
             services.AddScoped<IBeneficiarioManager, BeneficiarioManager>();
+            services.AddScoped<IAgentExternalManager, AgentExternalManager>();
 
             return services;
 
